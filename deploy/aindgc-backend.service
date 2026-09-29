@@ -1,0 +1,35 @@
+[Unit]
+Description=Aindgc Backend Service
+After=network.target mysql.service
+Wants=mysql.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/aindgc/backend
+ExecStart=/usr/bin/java -Xms256m -Xmx512m -jar /opt/aindgc/backend/aindgc-backend.jar
+ExecStop=/bin/kill -TERM $MAINPID
+Restart=on-failure
+RestartSec=10
+
+# Env (override in /etc/aindgc/backend.env)
+EnvironmentFile=/etc/aindgc/backend.env
+
+# Logging
+StandardOutput=append:/var/log/aindgc/out.log
+StandardError=append:/var/log/aindgc/err.log
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/aindgc/backend /var/log/aindgc
+
+# Memory (tune for 2C2G; Phase 14 may need higher if full feature set enabled)
+MemoryHigh=768M
+MemoryMax=1024M
+
+[Install]
+WantedBy=multi-user.target

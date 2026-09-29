@@ -1,0 +1,256 @@
+/**
+ * Element Plus deep theme override
+ * Match Aindgc Design System — dark, minimal, editorial.
+ */
+:root,
+:root[data-theme='dark'] {
+  /* Brand colors */
+  --el-color-primary: var(--accent-primary);
+  --el-color-primary-light-3: rgba(111, 168, 255, 0.55);
+  --el-color-primary-light-5: rgba(111, 168, 255, 0.30);
+  --el-color-primary-light-7: rgba(111, 168, 255, 0.16);
+  --el-color-primary-light-8: rgba(111, 168, 255, 0.10);
+  --el-color-primary-light-9: rgba(111, 168, 255, 0.06);
+  --el-color-primary-dark-2: #5591E8;
+
+  --el-color-success: var(--color-success);
+  --el-color-warning: var(--color-warning);
+  --el-color-danger: var(--color-danger);
+  --el-color-error: var(--color-danger);
+  --el-color-info: var(--text-tertiary);
+
+  /* Backgrounds */
+  --el-bg-color: var(--bg-elevated);
+  --el-bg-color-page: var(--bg-base);
+  --el-bg-color-overlay: var(--bg-overlay);
+
+  /* Borders */
+  --el-border-color: var(--border-default);
+  --el-border-color-light: var(--border-subtle);
+  --el-border-color-lighter: var(--border-subtle);
+  --el-border-color-extra-light: var(--border-subtle);
+  --el-border-color-dark: var(--border-strong);
+
+  /* Text */
+  --el-text-color-primary: var(--text-primary);
+  --el-text-color-regular: var(--text-secondary);
+  --el-text-color-secondary: var(--text-tertiary);
+  --el-text-color-placeholder: var(--text-muted);
+  --el-text-color-disabled: var(--text-muted);
+
+  /* Border radius */
+  --el-border-radius-base: var(--radius-sm);
+  --el-border-radius-small: var(--radius-xs);
+  --el-border-radius-round: var(--radius-full);
+
+  /* Subtle shadows instead of heavy ones */
+  --el-box-shadow: var(--shadow-md);
+  --el-box-shadow-light: var(--shadow-sm);
+  --el-box-shadow-lighter: var(--shadow-sm);
+  --el-box-shadow-dark: var(--shadow-lg);
+
+  /* Font */
+  --el-font-family: var(--font-sans);
+}
+
+/* ===================== Buttons ===================== */
+.el-button {
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  letter-spacing: var(--letter-normal);
+  transition: all var(--duration-fast) var(--ease-standard);
+}
+.el-button--primary {
+  --el-button-bg-color: var(--accent-primary);
+  --el-button-border-color: var(--accent-primary);
+  --el-button-hover-bg-color: #88B8FF;
+  --el-button-hover-border-color: #88B8FF;
+  --el-button-active-bg-color: #5591E8;
+  --el-button-active-border-color: #5591E8;
+  color: #06121F;
+}
+.el-button--default {
+  --el-button-bg-color: transparent;
+  --el-button-border-color: var(--border-default);
+  --el-button-hover-bg-color: var(--surface-1);
+  --el-button-hover-border-color: var(--accent-primary);
+  --el-button-text-color: var(--text-primary);
+}
+
+/* ===================== Inputs ===================== */
+.el-input__wrapper,
+.el-textarea__inner {
+  background: var(--surface-1);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 0 0 1px var(--border-subtle) inset;
+  transition: box-shadow var(--duration-fast) var(--ease-standard);
+}
+.el-input__wrapper:hover,
+.el-textarea__inner:hover {
+  box-shadow: 0 0 0 1px var(--border-default) inset;
+}
+.el-input__wrapper.is-focus,
+.el-textarea__inner:focus {
+  box-shadow: 0 0 0 1px var(--accent-primary) inset;
+}
+.el-input__inner,
+.el-textarea__inner {
+  color: var(--text-primary);
+}
+.el-input__inner::placeholder,
+.el-textarea__inner::placeholder {
+  color: var(--text-muted);
+}
+
+/* ===================== Select / Dropdown ===================== */
+.el-select__wrapper {
+  background: var(--surface-1);
+  box-shadow: 0 0 0 1px var(--border-subtle) inset !important;
+  border-radius: var(--radius-sm);
+}
+.el-select__wrapper.is-hovering {
+  box-shadow: 0 0 0 1px var(--border-default) inset !important;
+}
+.el-select__wrapper.is-focused {
+  box-shadow: 0 0 0 1px var(--accent-primary) inset !important;
+}
+.el-select-dropdown {
+  background: var(--bg-overlay);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-md);
+}
+.el-select-dropdown__item {
+  color: var(--text-secondary);
+  border-radius: var(--radius-xs);
+  margin-inline: 4px;
+  width: auto;
+}
+.el-select-dropdown__item.is-hovering {
+  background: var(--surface-1);
+  color: var(--text-primary);
+}
+.el-select-dropdown__item.is-selected {
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+/* ===================== Card ===================== */
+.el-card {
+  background: var(--bg-elevated);
+  border-color: var(--border-subtle);
+}
+
+/* ===================== Tabs ===================== */
+.el-tabs__nav-wrap::after {
+  background: var(--border-subtle);
+}
+.el-tabs__item {
+  color: var(--text-tertiary);
+  font-weight: 500;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.el-tabs__item:hover {
+  color: var(--text-primary);
+}
+.el-tabs__item.is-active {
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+.el-tabs__active-bar {
+  background-color: var(--accent-primary);
+}
+
+/* ===================== Radio & Checkbox ===================== */
+.el-radio__label,
+.el-checkbox__label {
+  color: var(--text-secondary);
+}
+.el-radio__input.is-checked + .el-radio__label,
+.el-checkbox__input.is-checked + .el-checkbox__label {
+  color: var(--text-primary);
+}
+.el-radio__inner,
+.el-checkbox__inner {
+  background: var(--surface-1);
+  border-color: var(--border-default);
+}
+.el-radio__input.is-checked .el-radio__inner,
+.el-checkbox__input.is-checked .el-checkbox__inner {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+/* ===================== Switch ===================== */
+.el-switch {
+  --el-switch-on-color: var(--accent-primary);
+  --el-switch-off-color: var(--surface-2);
+}
+
+/* ===================== Slider ===================== */
+.el-slider__runway {
+  background: var(--surface-1);
+}
+.el-slider__bar {
+  background: var(--accent-primary);
+}
+.el-slider__button {
+  border: 2px solid var(--accent-primary);
+  background: var(--bg-base);
+}
+
+/* ===================== Pagination ===================== */
+.el-pagination .btn-prev,
+.el-pagination .btn-next,
+.el-pager li {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+.el-pager li.is-active {
+  background: var(--accent-primary);
+  color: #06121F;
+  border-color: var(--accent-primary);
+}
+
+/* ===================== Empty ===================== */
+.el-empty {
+  color: var(--text-tertiary);
+}
+.el-empty__description p {
+  color: var(--text-tertiary);
+}
+
+/* ===================== Loading ===================== */
+.el-loading-mask {
+  background: rgba(11, 14, 19, 0.72);
+  backdrop-filter: blur(4px);
+}
+.el-loading-spinner .circular {
+  stroke: var(--accent-primary);
+}
+
+/* ===================== Message (Toast) ===================== */
+.a-toast.el-message {
+  background: var(--bg-overlay) !important;
+  border: 1px solid var(--border-default) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: var(--space-3) var(--space-4) !important;
+  min-width: 280px;
+  font-family: var(--font-sans) !important;
+}
+.a-toast.el-message .el-message__content {
+  color: var(--text-primary) !important;
+}
+.a-toast.el-message .el-message__closeBtn {
+  color: var(--text-tertiary) !important;
+}
+
+/* ===================== Scrollbar in EP overlays ===================== */
+.el-select-dropdown__wrap,
+.el-dropdown-menu {
+  scrollbar-width: thin;
+}

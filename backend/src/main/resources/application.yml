@@ -1,0 +1,74 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: aindgc-backend
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+  jpa:
+    open-in-view: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain,text/css,application/javascript
+  forward-headers-strategy: framework
+
+# Aindgc custom config
+aindgc:
+  version: 0.1.0
+  jwt:
+    # Override in env; default is dev-only placeholder
+    secret: ${AINDGC_JWT_SECRET:change-me-in-production-this-is-a-dev-only-placeholder-secret-key-32-chars-min}
+    access-token-ttl-seconds: 86400      # 24h
+    refresh-token-ttl-seconds: 2592000  # 30d
+    issuer: aindgc
+  upload:
+    base-dir: ${AINDGC_UPLOAD_DIR:/opt/aindgc/uploads}
+    public-prefix: /uploads
+  cors:
+    allowed-origins:
+      - http://localhost:5173
+      - http://127.0.0.1:5173
+      - https://aindgc.com
+      - https://www.aindgc.com
+      - https://admin.aindgc.com
+
+# MyBatis-Plus
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    cache-enabled: false
+  global-config:
+    db-config:
+      id-type: AUTO
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+    banner: false
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.aindgc.ai.entity
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.aindgc.ai: DEBUG
+    org.springframework.security: INFO
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} : %m%n"
+
+# Springdoc
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha

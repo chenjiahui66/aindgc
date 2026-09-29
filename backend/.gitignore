@@ -1,0 +1,42 @@
+# Build outputs
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+
+# Logs
+logs/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spring
+HELP.md
+application-local.yml
+application-local.yaml
+
+# Maven
+dependency-reduced-pom.xml
+
+# Test reports
+surefire-reports/
+test-output/
+
+# Local secrets
+secrets/
+*.env.local

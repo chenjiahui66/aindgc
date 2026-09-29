@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://aindgc.com/sitemap.xml

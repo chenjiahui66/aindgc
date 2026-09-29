@@ -1,0 +1,4 @@
+// Placeholder so the components directory is tracked by git.
+// Phase 2 will add A* components (AButton, AInput, etc.) and per-feature
+// component folders (layout/, home/, workflow/, chart/, animation/, seo/).
+export {}
