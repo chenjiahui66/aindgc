@@ -4,6 +4,7 @@ import com.aindgc.ai.common.Result;
 import com.aindgc.ai.common.ResultCode;
 import com.aindgc.ai.entity.Role;
 import com.aindgc.ai.entity.User;
+import com.aindgc.ai.entity.UserRole;
 import com.aindgc.ai.exception.BusinessException;
 import com.aindgc.ai.mapper.RoleMapper;
 import com.aindgc.ai.mapper.UserMapper;
@@ -44,18 +45,18 @@ public class AuthController {
     @Operation(summary = "Register new user")
     public Result<AuthResponse> register(@Valid @RequestBody RegisterRequest req) {
         Long existing = userMapper.selectCount(
-            new QueryWrapper<User>().eq("username", req.username()).eq("deleted", 0));
+            new QueryWrapper<User>().eq("username", req.getUsername()).eq("deleted", 0));
         if (existing > 0) throw new BusinessException(ResultCode.USER_ALREADY_EXISTS, "Username taken");
 
         Long emailExisting = userMapper.selectCount(
-            new QueryWrapper<User>().eq("email", req.email()).eq("deleted", 0));
+            new QueryWrapper<User>().eq("email", req.getEmail()).eq("deleted", 0));
         if (emailExisting > 0) throw new BusinessException(ResultCode.USER_ALREADY_EXISTS, "Email taken");
 
         User u = new User();
-        u.setUsername(req.username());
-        u.setEmail(req.email());
-        u.setPasswordHash(passwordEncoder.encode(req.password()));
-        u.setNickname(req.nickname() != null ? req.nickname() : req.username());
+        u.setUsername(req.getUsername());
+        u.setEmail(req.getEmail());
+        u.setPasswordHash(passwordEncoder.encode(req.getPassword()));
+        u.setNickname(req.getNickname() != null ? req.getNickname() : req.getUsername());
         u.setStatus(1);
         u.setCreatedAt(LocalDateTime.now());
         u.setUpdatedAt(LocalDateTime.now());
@@ -77,14 +78,14 @@ public class AuthController {
     @Operation(summary = "Login with username + password")
     public Result<AuthResponse> login(@Valid @RequestBody LoginRequest req) {
         User u = userMapper.selectOne(
-            new QueryWrapper<User>().eq("username", req.username()).eq("deleted", 0));
+            new QueryWrapper<User>().eq("username", req.getUsername()).eq("deleted", 0));
         if (u == null) throw new BusinessException(ResultCode.INVALID_CREDENTIALS);
 
         if (u.getStatus() == null || u.getStatus() != 1) {
             throw new BusinessException(ResultCode.FORBIDDEN, "Account disabled");
         }
 
-        if (!passwordEncoder.matches(req.password(), u.getPasswordHash())) {
+        if (!passwordEncoder.matches(req.getPassword(), u.getPasswordHash())) {
             throw new BusinessException(ResultCode.INVALID_CREDENTIALS);
         }
 

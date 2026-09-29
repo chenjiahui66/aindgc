@@ -171,8 +171,10 @@ public class ContentDataInitializer implements CommandLineRunner {
 
     private void seedCases() {
         if (!isEmpty("t_case_project", caseProjectMapper)) return;
-        var product = caseCat("Product"); var agent = caseCat("Agent");
-        var experiment = caseCat("Experiment");
+        // Look up categories by slug (inserted earlier in seedCaseCategories)
+        var product    = findCaseCat("product");
+        var agent      = findCaseCat("agent");
+        var experiment = findCaseCat("experiment");
         for (var c : List.of(
             buildAindgcWorkbench(product.getId()),
             buildMultiAgentPoC(agent.getId()),
@@ -180,6 +182,19 @@ public class ContentDataInitializer implements CommandLineRunner {
             buildAiCodingExperiment(experiment.getId())
         )) caseProjectMapper.insert(c);
         log.info("[Seed] Inserted 4 case studies");
+    }
+
+    /** Look up a case category by slug, falling back to a transient instance if not found. */
+    private CaseCategory findCaseCat(String slug) {
+        CaseCategory c = caseCategoryMapper.selectOne(
+            new QueryWrapper<CaseCategory>().eq("slug", slug).eq("deleted", 0));
+        if (c == null) {
+            // Should never happen — seedCaseCategories runs first.
+            log.warn("[Seed] Case category slug='{}' not found, using stub", slug);
+            c = new CaseCategory();
+            c.setName(slug); c.setSlug(slug); c.setSort(99);
+        }
+        return c;
     }
 
     private CaseProject buildAindgcWorkbench(Long catId) {
@@ -192,8 +207,6 @@ public class ContentDataInitializer implements CommandLineRunner {
         c.setRepoUrl("https://github.com/aindgc/aindgc");
         c.setDemoUrl("https://aindgc.com");
         c.setPublishedAt(parseDate("2026-09-15"));
-        c.setTechnologies("[\"Vue 3\",\"TypeScript\",\"Pinia\",\"Vite\",\"Rule Engine\"]");
-        c.setAiModels("[\"Claude Sonnet 4.5\",\"GPT-4o\"]");
         c.setProblemMd(problem1());
         c.setThinkingMd(thinking1());
         c.setApproachMd(approach1());
@@ -214,8 +227,6 @@ public class ContentDataInitializer implements CommandLineRunner {
         c.setCategoryId(catId);
         c.setRepoUrl("https://github.com/aindgc/multi-agent-poc");
         c.setPublishedAt(parseDate("2026-08-22"));
-        c.setTechnologies("[\"Vue Flow\",\"Multi-Agent\",\"Claude API\"]");
-        c.setAiModels("[\"Claude Sonnet 4.5\"]");
         c.setProblemMd(problem2());
         c.setThinkingMd(thinking2());
         c.setApproachMd(approach2());
@@ -235,8 +246,6 @@ public class ContentDataInitializer implements CommandLineRunner {
         c.setType("CONCEPT"); c.setStatus("PUBLISHED"); c.setIsFeatured(0);
         c.setCategoryId(catId);
         c.setPublishedAt(parseDate("2026-09-02"));
-        c.setTechnologies("[\"MCP\",\"Git\",\"Markdown\",\"YAML Frontmatter\"]");
-        c.setAiModels("[\"Claude Code\",\"Codex\",\"Cursor\",\"Gemini CLI\"]");
         c.setProblemMd(problem3());
         c.setThinkingMd(thinking3());
         c.setApproachMd(approach3());
@@ -256,8 +265,6 @@ public class ContentDataInitializer implements CommandLineRunner {
         c.setType("EXPERIMENT"); c.setStatus("PUBLISHED"); c.setIsFeatured(1);
         c.setCategoryId(catId);
         c.setPublishedAt(parseDate("2026-08-30"));
-        c.setTechnologies("[\"Claude Code\",\"Codex\",\"Git\"]");
-        c.setAiModels("[\"Claude Code\",\"Codex\"]");
         c.setProblemMd(problem4());
         c.setThinkingMd(thinking4());
         c.setApproachMd(approach4());
@@ -371,11 +378,11 @@ public class ContentDataInitializer implements CommandLineRunner {
         a.setSlug(slug); a.setTitle(title); a.setSummary(summary);
         a.setContentMd(content); a.setCategoryId(catId);
         a.setStatus(status); a.setIsFeatured(isFeatured ? 1 : 0);
-        a.setAuthor("Aindgc");
+        // authorId left null — system-seeded content; authorship is "Aindgc" the org
         a.setPublishedAt(parseDate(publishedAt));
         a.setSeoTitle(seoTitle); a.setSeoDescription(seoDesc);
         a.setSeoKeywords("AI Insights, Aindgc, " + title);
-        a.setViewCount(0); a.setLikeCount(0);
+        a.setViewCount(0L); a.setLikeCount(0L);
         a.setCreatedAt(LocalDateTime.now()); a.setUpdatedAt(LocalDateTime.now()); a.setDeleted(0);
         return a;
     }
