@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { watch } from 'vue'
 import { i18n, type Locale } from '@/i18n'
 
 const routes: RouteRecordRaw[] = [
@@ -291,8 +292,9 @@ function applyMeta(to: { meta: Record<string, unknown> }) {
 
 router.afterEach((to) => applyMeta(to))
 
-// Re-apply current route's meta on locale change (titles, descriptions, html lang)
-i18n.global.locale.subscribe(() => {
+// Re-apply current route's meta on locale change (titles, descriptions, html lang).
+// vue-i18n v9 exposes locale as a WritableComputedRef — use Vue's watch, not .subscribe().
+watch(i18n.global.locale, () => {
   applyMeta(router.currentRoute.value)
 })
 
