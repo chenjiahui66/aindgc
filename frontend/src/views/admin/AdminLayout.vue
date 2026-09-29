@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter, useRoute, RouterLink, RouterView } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@/stores/user'
 import { useToast } from '@/composables/useToast'
 import AIcon from '@components/common/AIcon.vue'
@@ -11,19 +12,20 @@ const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 const toast = useToast()
+const { t, locale } = useI18n()
 
-const navItems = [
-  { name: 'admin-dashboard', label: 'Dashboard',     icon: 'grid' },
-  { name: 'admin-articles',  label: 'Articles',      icon: 'file-text' },
-  { name: 'admin-cases',     label: 'Cases',         icon: 'briefcase' },
-  { name: 'admin-tools',     label: 'Tools',         icon: 'wrench' },
-  { name: 'admin-users',     label: 'Users',         icon: 'users' },
-  { name: 'admin-settings',  label: 'Settings',      icon: 'settings' }
-]
+const navItems = computed(() => [
+  { name: 'admin-dashboard', label: t('admin.nav.dashboard'), icon: 'grid' },
+  { name: 'admin-articles',  label: t('admin.nav.articles'),  icon: 'file-text' },
+  { name: 'admin-cases',     label: t('admin.nav.cases'),     icon: 'briefcase' },
+  { name: 'admin-tools',     label: t('admin.nav.tools'),     icon: 'wrench' },
+  { name: 'admin-users',     label: t('admin.nav.users'),     icon: 'users' },
+  { name: 'admin-settings',  label: t('admin.nav.settings'),  icon: 'settings' }
+])
 
 const currentTitle = computed(() => {
-  const item = navItems.find((i) => i.name === route.name)
-  return item?.label ?? 'Admin'
+  const item = navItems.value.find((i) => i.name === route.name)
+  return item?.label ?? t('nav.admin')
 })
 
 const userInitial = computed(() => {
@@ -34,7 +36,7 @@ const userInitial = computed(() => {
 
 function handleLogout() {
   userStore.logout()
-  toast.success('Signed out')
+  toast.success(locale.value === 'zh' ? '已退出' : 'Signed out')
   router.push('/')
 }
 </script>
@@ -46,7 +48,7 @@ function handleLogout() {
       <div class="brand">
         <RouterLink to="/admin" class="brand-link">
           <span class="brand-mark">A</span>
-          <span class="brand-text">Aindgc Admin</span>
+          <span class="brand-text">{{ t('common.appName') }} · {{ t('nav.admin') }}</span>
         </RouterLink>
       </div>
 
@@ -66,7 +68,7 @@ function handleLogout() {
       <div class="sidebar-foot">
         <RouterLink to="/" class="back-link">
           <AIcon name="arrow-left" :size="14" />
-          <span>Back to site</span>
+          <span>{{ t('notFound.backHome') === 'Back to home' ? 'Back to site' : '返回站点' }}</span>
         </RouterLink>
       </div>
     </aside>

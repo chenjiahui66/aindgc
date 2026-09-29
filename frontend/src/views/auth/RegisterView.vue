@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@stores/user'
-import { useToast } from '@composables/useToast'
+import { useToast } from '@/composables/useToast'
 import AInput from '@components/common/AInput.vue'
 import AButton from '@components/common/AButton.vue'
 import AIcon from '@components/common/AIcon.vue'
@@ -13,6 +14,10 @@ import Stack from '@components/layout/Stack.vue'
 const router = useRouter()
 const userStore = useUserStore()
 const toast = useToast()
+const { t, locale } = useI18n()
+
+// Validation messages — bilingual pairs (kept inline since they're validation, not chrome)
+const msg = (en: string, zh: string) => locale.value === 'zh' ? zh : en
 
 const username = ref('')
 const email = ref('')
@@ -23,11 +28,11 @@ const error = ref<string | null>(null)
 
 async function submit() {
   error.value = null
-  if (username.value.length < 3) { error.value = 'Username must be at least 3 characters'; return }
-  if (!/^[a-zA-Z0-9_-]+$/.test(username.value)) { error.value = 'Username: letters, numbers, _, - only'; return }
-  if (!/.+@.+\..+/.test(email.value)) { error.value = 'Please enter a valid email'; return }
-  if (password.value.length < 6) { error.value = 'Password must be at least 6 characters'; return }
-  if (password.value !== confirm.value) { error.value = 'Passwords do not match'; return }
+  if (username.value.length < 3) { error.value = msg('Username must be at least 3 characters', '用户名至少 3 个字符'); return }
+  if (!/^[a-zA-Z0-9_-]+$/.test(username.value)) { error.value = msg('Letters, numbers, _ and - only', '只允许字母、数字、_ 和 -'); return }
+  if (!/.+@.+\..+/.test(email.value)) { error.value = msg('Please enter a valid email', '请输入有效的邮箱地址'); return }
+  if (password.value.length < 6) { error.value = msg('Password must be at least 6 characters', '密码至少 6 个字符'); return }
+  if (password.value !== confirm.value) { error.value = msg('Passwords do not match', '两次密码输入不一致'); return }
   try {
     const u = await userStore.register({
       username: username.value,
@@ -35,10 +40,10 @@ async function submit() {
       password: password.value,
       nickname: nickname.value || undefined
     })
-    toast.success(`Welcome, ${u.nickname || u.username}!`)
+    toast.success(locale.value === 'zh' ? `欢迎,${u.nickname || u.username}!` : `Welcome, ${u.nickname || u.username}!`)
     router.push('/')
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Registration failed'
+    error.value = e instanceof Error ? e.message : msg('Registration failed', '注册失败')
   }
 }
 </script>
@@ -50,45 +55,45 @@ async function submit() {
         <Stack :gap="5" align="center">
           <header class="head">
             <AIcon name="user-plus" :size="28" />
-            <h1>Create your account</h1>
-            <p class="muted">Free · No credit card · Instant access.</p>
+            <h1>{{ t('auth.registerTitle') }}</h1>
+            <p class="muted">{{ t('auth.registerSubtitle') }}</p>
           </header>
 
           <form class="form" @submit.prevent="submit">
             <Stack :gap="4">
               <Stack :gap="2">
-                <label class="lbl">Username</label>
+                <label class="lbl">{{ t('auth.username') }}</label>
                 <AInput v-model="username" placeholder="your_username" prefix-icon="user" autofocus block />
               </Stack>
               <Stack :gap="2">
-                <label class="lbl">Email</label>
+                <label class="lbl">{{ t('auth.email') }}</label>
                 <AInput v-model="email" type="email" placeholder="you@example.com" prefix-icon="mail" block />
               </Stack>
               <Stack :gap="2">
-                <label class="lbl">Nickname <span class="hint">optional</span></label>
-                <AInput v-model="nickname" placeholder="Display name" block />
+                <label class="lbl">{{ t('auth.nickname') }} <span class="hint">{{ t('common.optional') }}</span></label>
+                <AInput v-model="nickname" :placeholder="t('auth.nickname')" block />
               </Stack>
               <Stack :gap="2">
-                <label class="lbl">Password <span class="hint">≥ 6 chars</span></label>
+                <label class="lbl">{{ t('auth.password') }} <span class="hint">≥ 6</span></label>
                 <AInput v-model="password" type="password" placeholder="••••••" prefix-icon="lock" block />
               </Stack>
               <Stack :gap="2">
-                <label class="lbl">Confirm password</label>
+                <label class="lbl">{{ t('auth.confirmPassword') }}</label>
                 <AInput v-model="confirm" type="password" placeholder="••••••" prefix-icon="lock" block />
               </Stack>
               <p v-if="error" class="error">{{ error }}</p>
               <AButton type="submit" variant="primary" size="lg" :loading="userStore.loading" block>
-                Create account
+                {{ t('nav.signup') }}
               </AButton>
             </Stack>
           </form>
 
           <p class="muted small">
-            Already have an account?
-            <RouterLink to="/login" class="link">Sign in</RouterLink>
+            {{ t('auth.haveAccount') }}
+            <RouterLink to="/login" class="link">{{ t('auth.signInHere') }}</RouterLink>
           </p>
           <p class="muted small">
-            <RouterLink to="/" class="link">← Back to home</RouterLink>
+            <RouterLink to="/" class="link">← {{ t('notFound.backHome') }}</RouterLink>
           </p>
         </Stack>
       </ACard>

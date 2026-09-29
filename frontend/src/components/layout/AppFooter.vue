@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Container from './Container.vue'
 import AIcon from '@components/common/AIcon.vue'
+import LangSwitch from '@components/common/LangSwitch.vue'
 import { useSEO } from '@composables/useSEO'
 
 interface Props {
@@ -9,13 +11,12 @@ interface Props {
 }
 withDefaults(defineProps<Props>(), { showSystem: false })
 
+const { t } = useI18n()
 const siteConfig = ref<Record<string, string>>({})
 
 onMounted(async () => {
-  // Phase 2 暂用本地默认值,Phase 15 接后端 /api/site/config
   siteConfig.value = {
     'site.title': 'Aindgc',
-    'site.tagline': 'Turn AI Into Work.',
     'contact.email': 'hello@aindgc.com',
     'social.github': '',
     'social.twitter': ''
@@ -38,36 +39,37 @@ useSEO({
               <path d="M8 22V10l8 12V10" stroke="var(--accent-primary)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
               <circle cx="24" cy="10" r="2" fill="var(--accent-secondary)" />
             </svg>
-            <span>Aindgc</span>
+            <span>{{ t('common.appName') }}</span>
           </div>
-          <p class="tagline">Turn AI Into Work.</p>
-          <p class="tagline-zh">让 AI 真正开始工作。</p>
-          <p class="muted">AI Product Lab · est. 2026</p>
+          <p class="tagline">{{ t('hero.title') }}</p>
+          <p class="muted">{{ t('common.appTagline') }} · est. 2026</p>
+          <div class="lang-slot">
+            <LangSwitch variant="inline" />
+          </div>
         </div>
 
         <div class="col">
-          <h4>Product</h4>
+          <h4>{{ t('footer.columns.product') }}</h4>
           <ul>
-            <li><router-link to="/tools">Tools</router-link></li>
-            <li><router-link to="/workbench">Workbench</router-link></li>
-            <li><router-link to="/workflow">Workflow</router-link></li>
-            <li><router-link to="/skills">Agent Skills</router-link></li>
-            <li><router-link to="/coding">AI Coding</router-link></li>
+            <li><router-link to="/tools">{{ t('footer.links.tools') }}</router-link></li>
+            <li><router-link to="/workflow">{{ t('footer.links.workflow') }}</router-link></li>
+            <li><router-link to="/skills">{{ t('footer.links.skills') }}</router-link></li>
+            <li><router-link to="/coding">{{ t('footer.links.coding') }}</router-link></li>
           </ul>
         </div>
 
         <div class="col">
-          <h4>For Business</h4>
+          <h4>{{ t('footer.columns.resources') }}</h4>
           <ul>
-            <li><router-link to="/roi">ROI Calculator</router-link></li>
-            <li><router-link to="/checkup">AI Checkup</router-link></li>
-            <li><router-link to="/cases">Cases</router-link></li>
-            <li><router-link to="/insights">Insights</router-link></li>
+            <li><router-link to="/roi">{{ t('footer.links.roi') }}</router-link></li>
+            <li><router-link to="/checkup">{{ t('footer.links.checkup') }}</router-link></li>
+            <li><router-link to="/cases">{{ t('footer.links.cases') }}</router-link></li>
+            <li><router-link to="/insights">{{ t('footer.links.insights') }}</router-link></li>
           </ul>
         </div>
 
         <div class="col">
-          <h4>Connect</h4>
+          <h4>{{ t('footer.columns.company') }}</h4>
           <ul>
             <li>
               <a href="https://github.com/" target="_blank" rel="noopener noreferrer">
@@ -89,13 +91,11 @@ useSEO({
       </div>
 
       <div class="bottom">
-        <p class="copyright">© {{ new Date().getFullYear() }} Aindgc · Made for builders · Built with intent.</p>
+        <p class="copyright">{{ t('footer.copyright', { year: new Date().getFullYear() }) }} · {{ t('footer.builtWith') }}</p>
         <div class="bottom-links">
-          <router-link to="/about">About</router-link>
+          <a href="#" rel="nofollow">{{ t('footer.legal.privacy') }}</a>
           <span class="dot">·</span>
-          <a href="#" rel="nofollow">Privacy</a>
-          <span class="dot">·</span>
-          <a href="#" rel="nofollow">Terms</a>
+          <a href="#" rel="nofollow">{{ t('footer.legal.terms') }}</a>
           <span v-if="showSystem" class="dot">·</span>
           <router-link v-if="showSystem" to="/design-system">Design System</router-link>
         </div>
@@ -146,6 +146,10 @@ useSEO({
   text-transform: uppercase;
   color: var(--text-tertiary);
   margin: 0;
+}
+
+.lang-slot {
+  margin-top: var(--space-4);
 }
 
 .col h4 {

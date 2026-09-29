@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import { i18n, type Locale } from '@/i18n'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -7,7 +8,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/home/HomeView.vue'),
     meta: {
       title: 'Aindgc — AI Product Lab',
-      description: 'Turn AI Into Work. 让 AI 真正开始工作。AI Workflow、Agent、ROI、AI 项目作品集。'
+      titleZh: 'Aindgc — AI 产品实验室',
+      description: 'Turn AI Into Work. AI workflows, agents, skills, coding, ROI — all free.'
     }
   },
   {
@@ -16,7 +18,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/tools/ToolsIndexView.vue'),
     meta: {
       title: 'AI Tools — Aindgc',
-      description: 'AI 工具集合:Agent Workflow、Skills Generator、Context Builder、Coding Starter、Prompt Builder、Output Schema。'
+      titleZh: 'AI 工具 — Aindgc',
+      description: 'Six AI productivity generators — Agent Workflow, Skills, Context Builder, Coding Starter, Prompt Builder, Output Schema.'
     }
   },
   {
@@ -89,7 +92,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/workflow/WorkflowListView.vue'),
     meta: {
       title: 'AI Workflow Builder — Aindgc',
-      description: '可视化构建 AI 工作流。Trigger / AI / Condition / Tool / Action / Output 节点,拖拽编辑,导出 Markdown 和 JSON。'
+      titleZh: 'AI 工作流编辑器 — Aindgc',
+      description: 'Visual AI workflow builder. Trigger / AI / Condition / Tool / Action / Output nodes, drag-edit, export Markdown & JSON.'
     }
   },
   {
@@ -108,7 +112,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/roi/RoiView.vue'),
     meta: {
       title: 'AI ROI Calculator — Aindgc',
-      description: '免费 AI ROI 计算器:输入员工数、工资、重复工作时间,得到估算的 AI 自动化潜力与年度节省。所有结果标注 Simulation。'
+      titleZh: 'AI ROI 计算器 — Aindgc',
+      description: 'Free AI ROI calculator. Estimate automation savings. Results labeled "Simulation".'
     }
   },
   {
@@ -117,7 +122,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/checkup/CheckupView.vue'),
     meta: {
       title: 'AI Work Checkup — Aindgc',
-      description: '免费 AI 准备度评估:6 步问卷 → AI Readiness Score + Top 5 自动化机会。'
+      titleZh: 'AI 工作体检 — Aindgc',
+      description: 'Free AI readiness assessment. 6-step questionnaire → AI Readiness Score + Top 5 automation opportunities.'
     }
   },
   {
@@ -126,6 +132,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/skills/SkillsIndexView.vue'),
     meta: {
       title: 'Skills Marketplace — Aindgc',
+      titleZh: 'Skills 市场 — Aindgc',
       description: 'Curated SKILL.md packs for Claude Code / Codex / Cursor / Gemini CLI.'
     }
   },
@@ -135,6 +142,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/coding/CodingTemplatesView.vue'),
     meta: {
       title: 'Coding Templates — Aindgc',
+      titleZh: 'Coding 模板 — Aindgc',
       description: 'Curated AI coding project starters: Vue / React / Spring Boot / FastAPI / Next.js / Flutter / Nginx. Includes AGENTS.md and key files.'
     }
   },
@@ -144,7 +152,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/cases/CasesIndexView.vue'),
     meta: {
       title: 'Cases — Aindgc',
-      description: 'AI 项目案例集:真实项目、原型、实验、概念。Problem / Approach / Architecture / Implementation / Result / What I Learned。'
+      titleZh: '项目案例 — Aindgc',
+      description: 'AI case studies: real projects, prototypes, experiments, concepts. Problem / Approach / Architecture / Implementation / Result / Lessons.'
     }
   },
   {
@@ -153,6 +162,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/cases/CaseDetailView.vue'),
     meta: {
       title: 'Case Study — Aindgc',
+      titleZh: '案例详情 — Aindgc',
       description: 'Aindgc case study'
     }
   },
@@ -162,7 +172,8 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/insights/InsightsIndexView.vue'),
     meta: {
       title: 'Insights — Aindgc',
-      description: 'AI 行业观察、思考、实验笔记。Agent、Workflow、Coding、Business、Productivity。'
+      titleZh: '行业洞察 — Aindgc',
+      description: 'AI industry observations, thinking, experiment notes — Agent, Workflow, Coding, Business, Productivity.'
     }
   },
   {
@@ -171,6 +182,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@views/insights/ArticleDetailView.vue'),
     meta: {
       title: 'Article — Aindgc',
+      titleZh: '文章 — Aindgc',
       description: 'Aindgc insights'
     }
   },
@@ -178,13 +190,13 @@ const routes: RouteRecordRaw[] = [
     path: '/login',
     name: 'login',
     component: () => import('@views/auth/LoginView.vue'),
-    meta: { title: 'Sign in — Aindgc', description: 'Sign in to your Aindgc account.', noindex: true }
+    meta: { title: 'Sign in — Aindgc', titleZh: '登录 — Aindgc', description: 'Sign in to your Aindgc account.', noindex: true }
   },
   {
     path: '/register',
     name: 'register',
     component: () => import('@views/auth/RegisterView.vue'),
-    meta: { title: 'Create account — Aindgc', description: 'Create a free Aindgc account.', noindex: true }
+    meta: { title: 'Create account — Aindgc', titleZh: '注册 — Aindgc', description: 'Create a free Aindgc account.', noindex: true }
   },
   {
     path: '/profile',
@@ -209,7 +221,7 @@ const routes: RouteRecordRaw[] = [
     path: '/:pathMatch(.*)*',
     name: 'not-found',
     component: () => import('@views/error/NotFoundView.vue'),
-    meta: { title: 'Not Found — Aindgc' }
+    meta: { title: 'Not Found — Aindgc', titleZh: '页面未找到 — Aindgc' }
   }
 ]
 
@@ -241,16 +253,32 @@ function safeParse(s: string): { role?: string } | null {
   try { return JSON.parse(s) } catch { return null }
 }
 
-router.afterEach((to) => {
-  const meta = to.meta as { title?: string; description?: string; noindex?: boolean }
-  if (meta.title) {
-    document.title = meta.title
+/**
+ * Resolve route title/description for current locale.
+ * Convention:
+ *   meta.title       — English/default title (required)
+ *   meta.titleZh     — Chinese title (optional)
+ *   meta.description — English description
+ *   meta.descriptionZh — Chinese description (optional)
+ */
+function resolveLocaleMeta(meta: Record<string, unknown>) {
+  const locale = (i18n.global.locale.value as Locale) || 'zh'
+  const titleKey = locale === 'zh' ? 'titleZh' : 'title'
+  const descKey = locale === 'zh' ? 'descriptionZh' : 'description'
+  return {
+    title: (meta[titleKey] as string) ?? (meta.title as string | undefined),
+    description: (meta[descKey] as string) ?? (meta.description as string | undefined)
   }
-  if (meta.description) {
+}
+
+function applyMeta(to: { meta: Record<string, unknown> }) {
+  const { title, description } = resolveLocaleMeta(to.meta)
+  if (title) document.title = title
+  if (description) {
     const desc = document.querySelector('meta[name="description"]')
-    if (desc) desc.setAttribute('content', meta.description)
+    if (desc) desc.setAttribute('content', description)
   }
-  if (meta.noindex) {
+  if (to.meta.noindex) {
     let robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]')
     if (!robots) {
       robots = document.createElement('meta')
@@ -259,6 +287,13 @@ router.afterEach((to) => {
     }
     robots.setAttribute('content', 'noindex,nofollow')
   }
+}
+
+router.afterEach((to) => applyMeta(to))
+
+// Re-apply current route's meta on locale change (titles, descriptions, html lang)
+i18n.global.locale.subscribe(() => {
+  applyMeta(router.currentRoute.value)
 })
 
 export default router

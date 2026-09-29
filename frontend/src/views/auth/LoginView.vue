@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useUserStore } from '@stores/user'
-import { useToast } from '@composables/useToast'
+import { useToast } from '@/composables/useToast'
 import AInput from '@components/common/AInput.vue'
 import AButton from '@components/common/AButton.vue'
 import AIcon from '@components/common/AIcon.vue'
@@ -13,6 +14,7 @@ import Stack from '@components/layout/Stack.vue'
 const router = useRouter()
 const userStore = useUserStore()
 const toast = useToast()
+const { t, locale } = useI18n()
 
 const username = ref('')
 const password = ref('')
@@ -21,15 +23,16 @@ const error = ref<string | null>(null)
 async function submit() {
   error.value = null
   if (!username.value.trim() || !password.value) {
-    error.value = 'Please enter username and password'
+    error.value = locale.value === 'zh' ? '请输入用户名和密码' : 'Please enter username and password'
     return
   }
   try {
     const u = await userStore.login(username.value, password)
-    toast.success(`Welcome back, ${u.nickname || u.username}`)
+    const greeting = locale.value === 'zh' ? `欢迎回来,${u.nickname || u.username}` : `Welcome back, ${u.nickname || u.username}`
+    toast.success(greeting)
     router.push('/')
   } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Login failed'
+    error.value = e instanceof Error ? e.message : (locale.value === 'zh' ? '登录失败' : 'Login failed')
   }
 }
 </script>
@@ -42,24 +45,24 @@ async function submit() {
           <Stack :gap="5" align="center">
             <header class="head">
               <AIcon name="log-in" :size="28" />
-              <h1>Welcome back</h1>
-              <p class="muted">Sign in to save workflows, sync tools, and more.</p>
+              <h1>{{ t('auth.loginTitle') }}</h1>
+              <p class="muted">{{ t('auth.loginSubtitle') }}</p>
             </header>
 
             <form class="form" @submit.prevent="submit">
               <Stack :gap="4">
                 <Stack :gap="2">
-                  <label class="lbl">Username</label>
-                  <AInput v-model="username" placeholder="your username" prefix-icon="user" autofocus block />
+                  <label class="lbl">{{ t('auth.username') }}</label>
+                  <AInput v-model="username" :placeholder="t('auth.username')" prefix-icon="user" autofocus block />
                 </Stack>
                 <Stack :gap="2">
-                  <label class="lbl">Password</label>
+                  <label class="lbl">{{ t('auth.password') }}</label>
                   <AInput v-model="password" type="password" placeholder="••••••" prefix-icon="lock" block />
                 </Stack>
                 <p v-if="error" class="error">{{ error }}</p>
                 <AButton type="submit" variant="primary" size="lg" :loading="userStore.loading" block>
                   <template #icon><AIcon name="arrow-right" /></template>
-                  Sign in
+                  {{ t('nav.login') }}
                 </AButton>
               </Stack>
             </form>
@@ -67,11 +70,11 @@ async function submit() {
             <div class="divider"><span>or</span></div>
 
             <p class="muted small">
-              No account yet?
-              <RouterLink to="/register" class="link">Create one</RouterLink>
+              {{ t('auth.noAccount') }}
+              <RouterLink to="/register" class="link">{{ t('auth.signUpHere') }}</RouterLink>
             </p>
             <p class="muted small">
-              <RouterLink to="/" class="link">← Back to home</RouterLink>
+              <RouterLink to="/" class="link">← {{ t('notFound.backHome') }}</RouterLink>
             </p>
           </Stack>
         </ACard>

@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
+import i18n from '@/i18n'
 
 // Design System tokens & reset (must be first)
 import '@design/reset.css'
@@ -20,6 +21,10 @@ const pinia = createPinia()
 
 app.use(pinia)
 app.use(router)
+app.use(i18n)
+
+// Sync <html lang> with initial locale (for SEO + screen readers)
+document.documentElement.lang = i18n.global.locale.value === 'zh' ? 'zh-CN' : 'en'
 
 // Global error handler
 app.config.errorHandler = (err, _instance, info) => {

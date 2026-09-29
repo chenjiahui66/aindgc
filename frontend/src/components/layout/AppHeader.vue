@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import Container from './Container.vue'
 import AIcon from '@components/common/AIcon.vue'
 import AButton from '@components/common/AButton.vue'
 import AAvatar from '@components/common/AAvatar.vue'
 import AEmpty from '@components/common/AEmpty.vue'
+import LangSwitch from '@components/common/LangSwitch.vue'
 import { useUserStore } from '@stores/user'
 import { useToast } from '@composables/useToast'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
@@ -17,68 +20,71 @@ const scrolled = ref(false)
 const mobileOpen = ref(false)
 const openMega = ref<string | null>(null)
 
+interface MegaSection {
+  title: string
+  description: string
+  items: { label: string; description: string; to: string }[]
+}
 interface NavItem {
+  key: string
   label: string
   to?: string
-  mega?: {
-    title: string
-    description: string
-    items: { label: string; description: string; to: string }[]
-  }[]
+  mega?: MegaSection[]
 }
 
-const nav: NavItem[] = [
+// Nav structure — labels resolved via t() so they react to locale changes
+const nav = computed<NavItem[]>(() => [
   {
-    label: 'Tools',
+    key: 'tools',
+    label: t('nav.tools'),
     mega: [
       {
         title: 'AI Agents',
-        description: '把工作流拆给 AI Agent 执行',
+        description: t('nav.tools') + ' · Agents',
         items: [
-          { label: 'Agent Workflow Generator', description: '生成结构化 AI 工作流', to: '/tools/agent-workflow-generator' },
-          { label: 'Agent Skills Generator',    description: '为 Claude Code / Codex 生成 SKILL.md', to: '/tools/agent-skills-generator' },
-          { label: 'Context Builder',            description: '构建结构化 Context 包',     to: '/tools/context-builder' }
+          { label: 'Agent Workflow Generator', description: t('hero.subtitle'), to: '/tools/agent-workflow-generator' },
+          { label: 'Agent Skills Generator',    description: 'SKILL.md for Claude Code / Codex', to: '/tools/agent-skills-generator' },
+          { label: 'Context Builder',            description: 'Structured context packs',     to: '/tools/context-builder' }
         ]
       },
       {
         title: 'AI Coding',
-        description: '从零启动一个 AI Coding 项目',
+        description: t('nav.tools') + ' · Coding',
         items: [
-          { label: 'Coding Project Starter', description: '生成 AGENTS.md / 项目结构',  to: '/tools/coding-project-starter' },
-          { label: 'Prompt Structure Builder', description: '把模糊任务变成结构化 Prompt', to: '/tools/prompt-structure-builder' },
-          { label: 'Output Schema Generator', description: '定义 AI 输出契约',            to: '/tools/output-schema-generator' }
+          { label: 'Coding Project Starter', description: 'AGENTS.md + project scaffold',  to: '/tools/coding-project-starter' },
+          { label: 'Prompt Structure Builder', description: 'Structured prompts', to: '/tools/prompt-structure-builder' },
+          { label: 'Output Schema Generator', description: 'JSON Schema / TypeScript types', to: '/tools/output-schema-generator' }
         ]
       }
     ]
   },
-  { label: 'Workbench', to: '/workbench' },
-  { label: 'Workflow', to: '/workflow' },
+  { key: 'workflow', label: t('nav.workflow'), to: '/workflow' },
   {
-    label: 'Insights',
+    key: 'insights',
+    label: t('nav.insights'),
     mega: [
       {
-        title: 'For Business',
-        description: '可落地的企业 AI 场景',
+        title: t('nav.cases'),
+        description: t('home.section.06-cases.subtitle'),
         items: [
-          { label: 'AI ROI Calculator', description: '估算 AI 自动化的成本与收益', to: '/roi' },
-          { label: 'AI Work Checkup',   description: '6 步评估 AI 准备度',           to: '/checkup' },
-          { label: 'For Business',      description: '7 大企业 AI 场景',             to: '/cases' }
+          { label: t('footer.links.roi'),       description: t('home.section.04-roi.subtitle'), to: '/roi' },
+          { label: t('footer.links.checkup'),  description: t('home.section.05-checkup.subtitle'), to: '/checkup' },
+          { label: t('footer.links.cases'),     description: t('home.section.06-cases.subtitle'), to: '/cases' }
         ]
       },
       {
-        title: 'For Builders',
-        description: 'AI Agent / Coding 工具集合',
+        title: t('nav.skills'),
+        description: t('nav.coding'),
         items: [
-          { label: 'Agent Skills',    description: '生成与分享 SKILL.md',  to: '/skills' },
-          { label: 'AI Coding',        description: 'Claude Code / Codex 项目', to: '/coding' },
-          { label: 'Cases',            description: '真实项目、实验、原型',  to: '/cases' }
+          { label: t('footer.links.skills'),  description: 'SKILL.md for AI agents',  to: '/skills' },
+          { label: t('footer.links.coding'),  description: 'Coding project starters', to: '/coding' },
+          { label: t('nav.cases'),             description: t('home.section.06-cases.title'), to: '/cases' }
         ]
       }
     ]
   },
-  { label: 'Cases', to: '/cases' },
-  { label: 'About', to: '/about' }
-]
+  { key: 'cases', label: t('nav.cases'), to: '/cases' }
+])
 
 function onScroll() {
   scrolled.value = window.scrollY > 8
@@ -99,7 +105,7 @@ function closeMega() {
 
 async function doLogout() {
   await userStore.logout()
-  toast.success('Logged out')
+  toast.success(t('common.copied') === 'Copied' ? 'Logged out' : '已退出')
   router.push('/')
 }
 
@@ -110,7 +116,6 @@ function goProfile() {
 function goAdmin() {
   router.push('/admin')
 }
-</script>
 </script>
 
 <template>
@@ -178,16 +183,13 @@ function goAdmin() {
 
         <div class="actions">
           <template v-if="!userStore.isAuthenticated">
-            <RouterLink to="/login" class="login-link">Login</RouterLink>
-            <RouterLink to="/register" class="login-link">Sign up</RouterLink>
-            <AButton variant="primary" size="sm">
-              <RouterLink to="/workbench" class="cta-link">Start Building</RouterLink>
-            </AButton>
+            <RouterLink to="/login" class="login-link">{{ t('nav.login') }}</RouterLink>
+            <RouterLink to="/register" class="login-link">{{ t('nav.signup') }}</RouterLink>
           </template>
           <template v-else>
             <APopover placement="bottom-end" trigger="click" :width="220">
               <template #reference>
-                <button class="avatar-btn" type="button" aria-label="Account menu">
+                <button class="avatar-btn" type="button" :aria-label="t('nav.profile')">
                   <AAvatar :name="userStore.displayName" size="sm" />
                   <span class="avatar-name">{{ userStore.displayName }}</span>
                   <AIcon v-if="userStore.isAdmin" name="shield" :size="12" class="admin-badge" />
@@ -196,24 +198,24 @@ function goAdmin() {
               </template>
               <div class="user-menu">
                 <button type="button" class="menu-item" @click="goProfile">
-                  <AIcon name="user" :size="14" /> Profile
+                  <AIcon name="user" :size="14" /> {{ t('nav.profile') }}
                 </button>
                 <button v-if="userStore.isAdmin" type="button" class="menu-item" @click="goAdmin">
-                  <AIcon name="shield" :size="14" /> Admin
+                  <AIcon name="shield" :size="14" /> {{ t('nav.admin') }}
                 </button>
                 <div class="menu-sep" />
                 <button type="button" class="menu-item danger" @click="doLogout">
-                  <AIcon name="log-out" :size="14" /> Log out
+                  <AIcon name="log-out" :size="14" /> {{ t('nav.logout') }}
                 </button>
               </div>
             </APopover>
           </template>
-          <button
+          <LangSwitch />
           <button
             class="mobile-toggle"
             type="button"
             :aria-expanded="mobileOpen"
-            aria-label="Toggle menu"
+            :aria-label="mobileOpen ? t('header.closeMenu') : t('header.openMenu')"
             @click="mobileOpen = !mobileOpen"
           >
             <AIcon :name="mobileOpen ? 'x' : 'menu'" :size="20" />
