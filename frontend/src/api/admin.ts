@@ -47,9 +47,9 @@ export interface AdminArticle {
 }
 
 export interface PageEnvelope<T> {
+  list: T[]
   total: number
-  records: T[]
-  current: number
+  page: number
   size: number
 }
 

@@ -42,7 +42,7 @@ async function load() {
       fetchArticleTags().catch(() => [])
     ])
     const categoryMap = buildCategoryMap(cats || [])
-    allArticles.value = page.records.map(r => adaptArticleFromList(r, categoryMap))
+    allArticles.value = page.list.map(r => adaptArticleFromList(r, categoryMap))
     tagList.value = tags || []
     isOffline.value = false
   } catch {

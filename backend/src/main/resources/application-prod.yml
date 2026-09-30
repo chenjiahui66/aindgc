@@ -1,7 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/aindgc?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&useUnicode=true
+    # characterEncoding must be a Java charset (UTF-8); the driver rejects
+    # the MySQL charset name utf8mb4 outright.
+    url: jdbc:mysql://127.0.0.1:3306/aindgc?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${DB_USER}
     password: ${DB_PASS}
     hikari:

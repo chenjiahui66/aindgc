@@ -34,7 +34,7 @@ async function load() {
       fetchCaseCategories().catch(() => [])
     ])
     const categoryMap = buildCaseCategoryMap(cats || [])
-    allCases.value = page.records.map(r => adaptCase(r, categoryMap))
+    allCases.value = page.list.map(r => adaptCase(r, categoryMap))
     isOffline.value = false
   } catch {
     // backend unreachable — fall back to local data

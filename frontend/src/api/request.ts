@@ -37,7 +37,9 @@ request.interceptors.response.use(
     const data = response.data
     if (data && typeof data === 'object' && 'code' in data) {
       if (data.code === 200) {
-        return data as unknown as AxiosResponse
+        // Unwrap the Result<T> envelope so `get<T>()` really does resolve to T.
+        // Callers (and the ApiPage/PageEnvelope types) all assume the bare payload.
+        return data.data as unknown as AxiosResponse
       }
       if (data.code === 401) {
         // 401 from a non-refresh, non-auth endpoint → try refresh
@@ -138,7 +140,7 @@ function forceLogout() {
   }
 }
 
-// The response interceptor unwraps `Result<T>` and returns the payload directly,
+// The response interceptor above unwraps `Result<T>` and returns the payload directly,
 // so axios's own AxiosResponse return type no longer matches reality.
 // The `as unknown as Promise<T>` casts below bridge that gap.
 export function get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {

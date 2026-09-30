@@ -1,9 +1,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/aindgc?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    username: ${DB_USER:root}
-    password: ${DB_PASS:root}
+    # characterEncoding must be a *Java* charset name (UTF-8), not the MySQL
+    # charset name utf8mb4 — the driver rejects it with
+    # "Unsupported character encoding 'utf8mb4'".
+    # connectionCollation is what actually pins the server-side collation.
+    url: jdbc:mysql://127.0.0.1:3306/aindgc?useUnicode=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_unicode_ci&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${DB_USER:aindgc}
+    password: ${DB_PASS:}
 
 logging:
   level:

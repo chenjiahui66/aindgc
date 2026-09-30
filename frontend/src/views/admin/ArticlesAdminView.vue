@@ -225,8 +225,8 @@ function formatDate(s?: string) {
             <th class="col-actions">Actions</th>
           </tr>
         </thead>
-        <tbody v-if="data?.records?.length">
-          <tr v-for="a in data.records" :key="a.id">
+        <tbody v-if="data?.list?.length">
+          <tr v-for="a in data.list" :key="a.id">
             <td class="col-title">
               <div class="title-cell">
                 <span class="title-text">{{ a.title }}</span>
@@ -261,7 +261,7 @@ function formatDate(s?: string) {
           </tr>
         </tbody>
       </table>
-      <p v-if="!data?.records?.length && !loading" class="empty">No articles match your filters.</p>
+      <p v-if="!data?.list?.length && !loading" class="empty">No articles match your filters.</p>
       <p v-if="loading" class="empty">Loading…</p>
     </div>
 

@@ -54,9 +54,9 @@ export interface ApiArticleDetail {
 }
 
 export interface ApiPage<T> {
+  list: T[]
   total: number
-  records: T[]
-  current: number
+  page: number
   size: number
 }
 

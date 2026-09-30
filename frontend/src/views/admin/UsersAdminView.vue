@@ -141,8 +141,8 @@ function roleVariant(r: string): 'primary' | 'muted' {
             <th class="col-actions">Actions</th>
           </tr>
         </thead>
-        <tbody v-if="data?.records?.length">
-          <tr v-for="u in data.records" :key="u.id">
+        <tbody v-if="data?.list?.length">
+          <tr v-for="u in data.list" :key="u.id">
             <td class="col-user">
               <div class="user-cell">
                 <AAvatar :name="userInitial(u)" size="sm" />
@@ -180,7 +180,7 @@ function roleVariant(r: string): 'primary' | 'muted' {
           </tr>
         </tbody>
       </table>
-      <p v-if="!data?.records?.length && !loading" class="empty">No users match your filters.</p>
+      <p v-if="!data?.list?.length && !loading" class="empty">No users match your filters.</p>
       <p v-if="loading" class="empty">Loading…</p>
     </div>
 
