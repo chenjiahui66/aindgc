@@ -366,6 +366,7 @@ CREATE TABLE t_case_project (
     view_count      BIGINT UNSIGNED NOT NULL DEFAULT 0,
     repo_url        VARCHAR(255) NULL,
     demo_url        VARCHAR(255) NULL,
+    category_id     BIGINT UNSIGNED NULL COMMENT 'FK t_case_category.id (logical, no hard FK)',
     published_at    DATETIME NULL,
     created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -431,6 +432,7 @@ CREATE TABLE t_seo_page (
     custom_jsonld   JSON NULL,
     updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted         TINYINT NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
     UNIQUE KEY uk_page_key (page_key),
     KEY idx_path (page_path)
@@ -469,6 +471,7 @@ CREATE TABLE t_site_config (
     is_public       TINYINT NOT NULL DEFAULT 0 COMMENT 'Whether exposed to frontend',
     created_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted         TINYINT NOT NULL DEFAULT 0,
     PRIMARY KEY (id),
     UNIQUE KEY uk_config_key (config_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Site configuration';

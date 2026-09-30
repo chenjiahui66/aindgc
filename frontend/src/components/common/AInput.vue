@@ -49,7 +49,6 @@ function onClear() {
 
 <template>
   <div class="a-input-wrap" :class="[`s-${size}`, { block }]">
-    <span v-if="prefixIcon" class="affix prefix"><AIcon :name="prefixIcon" :size="16" /></span>
     <ElInput
       :model-value="modelValue"
       :type="type"
@@ -79,14 +78,14 @@ function onClear() {
 </template>
 
 <style scoped>
+/* Full-width by default: AInput is used inside vertical Stack forms where the
+   input must line up with the label above it, not shrink to content. */
 .a-input-wrap {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  width: auto;
-}
-.a-input-wrap.block,
-.a-input-wrap.block :deep(.el-input) {
   width: 100%;
-  display: block;
+}
+.a-input-wrap :deep(.el-input) {
+  width: 100%;
 }
 </style>

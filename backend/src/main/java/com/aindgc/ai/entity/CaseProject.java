@@ -25,6 +25,10 @@ public class CaseProject extends BaseEntity {
     private String implementationMd;
     private String resultMd;
     private String learnedMd;
+    /** JSON array, e.g. ["Vue 3","TypeScript"] */
+    private String technologiesJson;
+    /** JSON array, e.g. ["Claude Sonnet 4.5"] */
+    private String aiModelsJson;
     /** REAL / PROTOTYPE / EXPERIMENT / CONCEPT */
     private String type;
     /** DRAFT / PUBLISHED */

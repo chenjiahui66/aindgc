@@ -126,11 +126,15 @@ async function submit() {
 .muted.small { font-size: var(--fs-caption); }
 
 .lbl {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
   font-family: var(--font-mono);
   font-size: var(--fs-caption);
   letter-spacing: var(--letter-wide);
   text-transform: uppercase;
   color: var(--text-tertiary);
+  line-height: 1.4;
 }
 .hint {
   text-transform: none;
@@ -138,6 +142,10 @@ async function submit() {
   color: var(--text-muted);
   font-size: 11px;
   font-weight: 400;
+}
+
+.form :deep(.stack) {
+  width: 100%;
 }
 
 .form { width: 100%; }

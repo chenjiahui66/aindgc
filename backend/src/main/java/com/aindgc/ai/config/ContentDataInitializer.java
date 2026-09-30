@@ -207,6 +207,8 @@ public class ContentDataInitializer implements CommandLineRunner {
         c.setRepoUrl("https://github.com/aindgc/aindgc");
         c.setDemoUrl("https://aindgc.com");
         c.setPublishedAt(parseDate("2026-09-15"));
+        c.setTechnologiesJson("[\"Vue 3\",\"TypeScript\",\"Pinia\",\"Vite\",\"Rule Engine\"]");
+        c.setAiModelsJson("[\"Claude Sonnet 4.5\",\"GPT-4o\"]");
         c.setProblemMd(problem1());
         c.setThinkingMd(thinking1());
         c.setApproachMd(approach1());
@@ -227,6 +229,8 @@ public class ContentDataInitializer implements CommandLineRunner {
         c.setCategoryId(catId);
         c.setRepoUrl("https://github.com/aindgc/multi-agent-poc");
         c.setPublishedAt(parseDate("2026-08-22"));
+        c.setTechnologiesJson("[\"Vue Flow\",\"Multi-Agent\",\"Claude API\"]");
+        c.setAiModelsJson("[\"Claude Sonnet 4.5\"]");
         c.setProblemMd(problem2());
         c.setThinkingMd(thinking2());
         c.setApproachMd(approach2());
@@ -246,6 +250,8 @@ public class ContentDataInitializer implements CommandLineRunner {
         c.setType("CONCEPT"); c.setStatus("PUBLISHED"); c.setIsFeatured(0);
         c.setCategoryId(catId);
         c.setPublishedAt(parseDate("2026-09-02"));
+        c.setTechnologiesJson("[\"MCP\",\"Git\",\"Markdown\",\"YAML Frontmatter\"]");
+        c.setAiModelsJson("[\"Claude Code\",\"Codex\",\"Cursor\",\"Gemini CLI\"]");
         c.setProblemMd(problem3());
         c.setThinkingMd(thinking3());
         c.setApproachMd(approach3());
@@ -265,6 +271,8 @@ public class ContentDataInitializer implements CommandLineRunner {
         c.setType("EXPERIMENT"); c.setStatus("PUBLISHED"); c.setIsFeatured(1);
         c.setCategoryId(catId);
         c.setPublishedAt(parseDate("2026-08-30"));
+        c.setTechnologiesJson("[\"Claude Code\",\"Codex\",\"Git\"]");
+        c.setAiModelsJson("[\"Claude Code\",\"Codex\"]");
         c.setProblemMd(problem4());
         c.setThinkingMd(thinking4());
         c.setApproachMd(approach4());

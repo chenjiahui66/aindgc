@@ -13,7 +13,15 @@ export interface ApiCase {
   slug: string
   title: string
   summary?: string
+  /** Legacy single-blob body. Prefer the per-section fields below. */
   contentMd?: string
+  problemMd?: string
+  thinkingMd?: string
+  approachMd?: string
+  architectureMd?: string
+  implementationMd?: string
+  resultMd?: string
+  learnedMd?: string
   type?: CaseType
   categoryId?: number
   industry?: string
@@ -23,8 +31,8 @@ export interface ApiCase {
   cover?: string
   repoUrl?: string
   demoUrl?: string
-  technologies?: string
-  aiModels?: string
+  technologiesJson?: string
+  aiModelsJson?: string
   status?: string
   isFeatured?: number
   viewCount?: number
@@ -42,9 +50,9 @@ export interface ApiCaseCategory {
 }
 
 export interface ApiPage<T> {
+  list: T[]
   total: number
-  records: T[]
-  current: number
+  page: number
   size: number
 }
 
@@ -66,8 +74,9 @@ export function fetchCaseDetail(slug: string) {
 }
 
 /* ── Adapter ── */
-// CaseStudy has many fields (problem/thinking/approach/architecture/implementation/result/learned).
-// Backend stores everything in a single contentMd blob. We split it on H2 headings.
+// The backend stores each narrative section in its own column (problemMd..learnedMd).
+// Older admin-authored rows may still carry a single contentMd blob, so we keep the
+// H2-splitting fallback and prefer the dedicated field whenever it is present.
 export function adaptCase(c: ApiCase, categoryMap: Map<number, ApiCaseCategory> = new Map()): LocalCase {
   const sections = splitMarkdownSections(c.contentMd || '')
   const cat = c.categoryId != null ? categoryMap.get(c.categoryId) : undefined
@@ -78,18 +87,18 @@ export function adaptCase(c: ApiCase, categoryMap: Map<number, ApiCaseCategory> 
     cover: c.cover,
     type: (c.type || 'CONCEPT') as CaseType,
     category: cat?.slug || 'all',
-    technologies: parseListField(c.technologies),
-    aiModels: parseListField(c.aiModels),
+    technologies: parseJsonArray(c.technologiesJson),
+    aiModels: parseJsonArray(c.aiModelsJson),
     repoUrl: c.repoUrl,
     demoUrl: c.demoUrl,
     publishedAt: (c.publishedAt || '').slice(0, 10),
-    problem: sections.problem || sections.intro || '',
-    thinking: sections.thinking || sections.context || '',
-    approach: sections.approach || sections.solution || '',
-    architecture: sections.architecture || sections.design || '',
-    implementation: sections.implementation || sections.build || '',
-    result: sections.result || sections.outcome || '',
-    learned: sections.learned || sections.lessons || '',
+    problem: c.problemMd || sections.problem || sections.intro || '',
+    thinking: c.thinkingMd || sections.thinking || sections.context || '',
+    approach: c.approachMd || sections.approach || sections.solution || '',
+    architecture: c.architectureMd || sections.architecture || sections.design || '',
+    implementation: c.implementationMd || sections.implementation || sections.build || '',
+    result: c.resultMd || sections.result || sections.outcome || '',
+    learned: c.learnedMd || sections.learned || sections.lessons || '',
     featured: c.isFeatured === 1
   }
 }
@@ -99,8 +108,13 @@ export function buildCaseCategoryMap(cats: ApiCaseCategory[]): Map<number, ApiCa
 }
 
 /* ── helpers ── */
-function parseListField(s?: string): string[] {
+/** Parse a MySQL JSON column into a string array; tolerate a plain CSV value. */
+function parseJsonArray(s?: string): string[] {
   if (!s) return []
+  try {
+    const parsed = JSON.parse(s)
+    if (Array.isArray(parsed)) return parsed.map(String)
+  } catch { /* not JSON — fall through to CSV */ }
   return s.split(/[,;|]/).map(t => t.trim()).filter(Boolean)
 }
 

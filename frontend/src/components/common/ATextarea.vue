@@ -56,7 +56,8 @@ function onInput(v: string | number) {
 </template>
 
 <style scoped>
-.a-textarea.block :deep(.el-textarea) {
+/* Full-width by default so it lines up with the label above, matching AInput. */
+.a-textarea :deep(.el-textarea) {
   width: 100%;
   display: block;
 }
