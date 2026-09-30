@@ -30,13 +30,16 @@ const flowNodes = ref<Node<WorkflowNodeData>[]>([])
 const flowEdges = ref<Edge<WorkflowEdgeData>[]>([])
 
 function syncFromStore() {
-  flowNodes.value = store.current.nodes.map(n => ({
+  // The explicit intermediate type keeps TS from infinitely instantiating
+  // Node<WorkflowNodeData> against Pinia's deeply-unwrapped store type
+  // (TS2589: "Type instantiation is excessively deep").
+  const nodes: Node<WorkflowNodeData>[] = store.current.nodes.map((n) => ({
     id: n.id,
     type: n.type,
     position: n.position,
     data: n.data
   }))
-  flowEdges.value = store.current.edges.map(e => ({
+  const edges: Edge<WorkflowEdgeData>[] = store.current.edges.map((e) => ({
     id: e.id,
     source: e.source,
     target: e.target,
@@ -44,6 +47,8 @@ function syncFromStore() {
     targetHandle: e.targetHandle,
     data: e.data
   }))
+  flowNodes.value = nodes
+  flowEdges.value = edges
 }
 
 watch(() => store.current, () => syncFromStore(), { deep: true, immediate: true })

@@ -138,20 +138,23 @@ function forceLogout() {
   }
 }
 
+// The response interceptor unwraps `Result<T>` and returns the payload directly,
+// so axios's own AxiosResponse return type no longer matches reality.
+// The `as unknown as Promise<T>` casts below bridge that gap.
 export function get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {
-  return request.get<unknown, T>(url, config)
+  return request.get(url, config) as unknown as Promise<T>
 }
 
 export function post<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-  return request.post<unknown, T>(url, data, config)
+  return request.post(url, data, config) as unknown as Promise<T>
 }
 
 export function put<T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
-  return request.put<unknown, T>(url, data, config)
+  return request.put(url, data, config) as unknown as Promise<T>
 }
 
 export function del<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {
-  return request.delete<unknown, T>(url, config)
+  return request.delete(url, config) as unknown as Promise<T>
 }
 
 export default request

@@ -22,10 +22,11 @@ const branchOptions = [
   { label: 'On error',   value: 'onError' }
 ]
 
-function updateLabel(v: string) {
+// AInput's update:modelValue is typed (string | number); narrow here.
+function updateLabel(v: string | number) {
   if (!node.value) return
   store.updateNode(node.value.id, {
-    data: { ...node.value.data, config: { ...node.value.data.config, label: v } }
+    data: { ...node.value.data, config: { ...node.value.data.config, label: String(v) } }
   })
 }
 
@@ -112,7 +113,7 @@ function removeNode() {
                   { label: 'Gemini Pro',     value: 'gemini-pro' },
                   { label: 'DeepSeek',       value: 'deepseek' }
                 ]"
-                @update:model-value="(v: string | number | boolean | object) => updatePayload('model', String(v))"
+                @update:model-value="(v: string | number | boolean | object | undefined) => updatePayload('model', String(v))"
               />
             </Stack>
           </template>
@@ -145,7 +146,7 @@ function removeNode() {
                   { label: 'CRM',           value: 'crm' },
                   { label: 'Custom',        value: 'custom' }
                 ]"
-                @update:model-value="(v: string | number | boolean | object) => updatePayload('service', String(v))"
+                @update:model-value="(v: string | number | boolean | object | undefined) => updatePayload('service', String(v))"
               />
             </Stack>
             <Stack :gap="2">
@@ -166,7 +167,7 @@ function removeNode() {
                   { label: 'Update DB',        value: 'db' },
                   { label: 'Webhook',          value: 'webhook' }
                 ]"
-                @update:model-value="(v: string | number | boolean | object) => updatePayload('action', String(v))"
+                @update:model-value="(v: string | number | boolean | object | undefined) => updatePayload('action', String(v))"
               />
             </Stack>
             <Stack :gap="2">
@@ -187,7 +188,7 @@ function removeNode() {
                   { label: 'New row in DB',   value: 'db-row' },
                   { label: 'Email received',  value: 'email' }
                 ]"
-                @update:model-value="(v: string | number | boolean | object) => updatePayload('type', String(v))"
+                @update:model-value="(v: string | number | boolean | object | undefined) => updatePayload('type', String(v))"
               />
             </Stack>
             <Stack :gap="2">
@@ -207,7 +208,7 @@ function removeNode() {
                   { label: 'Email',     value: 'email' },
                   { label: 'Slack',     value: 'slack' }
                 ]"
-                @update:model-value="(v: string | number | boolean | object) => updatePayload('format', String(v))"
+                @update:model-value="(v: string | number | boolean | object | undefined) => updatePayload('format', String(v))"
               />
             </Stack>
             <Stack :gap="2">

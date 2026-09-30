@@ -27,7 +27,7 @@ async function submit() {
     return
   }
   try {
-    const u = await userStore.login(username.value, password)
+    const u = await userStore.login(username.value, password.value)
     const greeting = locale.value === 'zh' ? `欢迎回来,${u.nickname || u.username}` : `Welcome back, ${u.nickname || u.username}`
     toast.success(greeting)
     router.push('/')

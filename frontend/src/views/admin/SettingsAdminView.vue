@@ -61,6 +61,10 @@ function openEdit(c: SiteConfig) {
   drawerOpen.value = true
 }
 
+function setVisibility(v: string | number | boolean | object | undefined) {
+  if (editing.value) editing.value.isPublic = Number(v)
+}
+
 async function onSave() {
   if (!editing.value) return
   saving.value = true
@@ -190,7 +194,7 @@ function formatDate(s?: string) {
                 { label: 'Public', value: '1' },
                 { label: 'Private', value: '0' }
               ]"
-              @update:model-value="(v: string | number | boolean | object) => editing && (editing.isPublic = Number(v))"
+              @update:model-value="setVisibility"
             />
           </div>
         </div>

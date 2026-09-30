@@ -4,7 +4,7 @@ import { ElTooltip } from 'element-plus'
 interface Props {
   content?: string
   placement?: 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end' | 'right' | 'right-start' | 'right-end'
-  trigger?: 'hover' | 'click' | 'focus' | 'manual'
+  trigger?: 'hover' | 'click' | 'focus' | 'contextmenu'
   disabled?: boolean
   showAfter?: number
   hideAfter?: number

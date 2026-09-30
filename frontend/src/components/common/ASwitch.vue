@@ -21,7 +21,10 @@ const emit = defineEmits<{
 
 const elSize = (props.size === 'sm' ? 'small' : props.size === 'lg' ? 'large' : 'default') as 'small' | 'default' | 'large'
 
-function onChange(v: boolean) {
+// ElSwitch types its events as (val: string | number | boolean) even though
+// the value is always boolean — accept the wide type and narrow here.
+function onChange(val: string | number | boolean) {
+  const v = Boolean(val)
   emit('update:modelValue', v)
   emit('change', v)
 }

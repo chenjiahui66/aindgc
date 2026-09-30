@@ -5,7 +5,7 @@ interface Props {
   title?: string
   content?: string
   placement?: 'top' | 'top-start' | 'top-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end' | 'right' | 'right-start' | 'right-end'
-  trigger?: 'hover' | 'click' | 'focus' | 'manual'
+  trigger?: 'hover' | 'click' | 'focus' | 'contextmenu'
   width?: string | number
   disabled?: boolean
   persistent?: boolean

@@ -30,7 +30,7 @@ const article = ref(getArticle(slug.value))
 const engagement = ref<ArticleEngagement>({ viewCount: 0, likeCount: 0 })
 const loading = ref(!article.value)
 const isOffline = ref(false)
-const notFound = ref(!article.value && false)
+const notFound = ref(false)
 const liking = ref(false)
 const toast = useToast()
 

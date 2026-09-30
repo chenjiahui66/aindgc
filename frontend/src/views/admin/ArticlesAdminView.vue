@@ -85,12 +85,11 @@ async function onSave() {
   }
   saving.value = true
   try {
-    const saved = await saveArticle(editing.value)
+    await saveArticle(editing.value)
     toast.success(isEdit.value ? 'Updated' : 'Created')
     drawerOpen.value = false
     editing.value = null
     await load()
-    return saved
   } catch (e) {
     toast.error((e as Error).message || 'Save failed')
   } finally {
@@ -124,6 +123,19 @@ function askDelete(a: AdminArticle) {
   confirmDelete.value = a
 }
 
+// Built in script, not in the template: `\"` inside a :title="..." attribute
+// breaks Vue's template expression parser.
+const confirmTitle = computed(() =>
+  confirmDelete.value ? `Delete "${confirmDelete.value.title}"?` : ''
+)
+
+// AModal's v-model is a boolean — v-model="confirmDelete" would feed the whole
+// AdminArticle object into a boolean prop.
+const confirmOpen = computed({
+  get: () => confirmDelete.value !== null,
+  set: (v: boolean) => { if (!v) confirmDelete.value = null }
+})
+
 async function doDelete() {
   if (!confirmDelete.value?.id) return
   try {
@@ -140,6 +152,25 @@ function resetFilters() {
   filterStatus.value = 'all'
   filterQ.value = ''
   page.value = 1
+  load()
+}
+
+// Named handlers — inline arrow bodies with `;` in templates break
+// the Vue template expression parser.
+function gotoFirstPage() {
+  page.value = 1
+  load()
+}
+
+function prevPage() {
+  if (page.value > 1) {
+    page.value--
+    load()
+  }
+}
+
+function nextPage() {
+  page.value++
   load()
 }
 
@@ -174,10 +205,10 @@ function formatDate(s?: string) {
         placeholder="Search title or summary…"
         clearable
         style="flex: 1; min-width: 200px;"
-        @keyup.enter="() => { page = 1; load() }"
+        @keyup.enter="gotoFirstPage"
       />
       <ASelect v-model="filterStatus" :options="statusOptions" style="width: 160px;" />
-      <AButton variant="ghost" size="md" @click="() => { page = 1; load() }">Apply</AButton>
+      <AButton variant="ghost" size="md" @click="gotoFirstPage">Apply</AButton>
       <AButton variant="ghost" size="md" @click="resetFilters">Reset</AButton>
     </div>
 
@@ -236,12 +267,12 @@ function formatDate(s?: string) {
 
     <!-- Pagination -->
     <footer v-if="(data?.total ?? 0) > pageSize" class="pagination">
-      <AButton variant="ghost" size="sm" :disabled="page <= 1" @click="() => { page--; load() }">Previous</AButton>
+      <AButton variant="ghost" size="sm" :disabled="page <= 1" @click="prevPage">Previous</AButton>
       <span class="page-info">Page {{ page }} · {{ data?.total }} total</span>
       <AButton
         variant="ghost" size="sm"
         :disabled="page * pageSize >= (data?.total ?? 0)"
-        @click="() => { page++; load() }"
+        @click="nextPage"
       >Next</AButton>
     </footer>
 
@@ -293,7 +324,7 @@ function formatDate(s?: string) {
     </ADrawer>
 
     <!-- Confirm delete -->
-    <AModal v-model="confirmDelete" :title="`Delete \"${confirmDelete?.title}\"?`" size="sm">
+    <AModal v-model="confirmOpen" :title="confirmTitle" size="sm">
       <p class="confirm-text">This will soft-delete the article. It will no longer appear in public listings but stays in the database for audit.</p>
       <template #footer>
         <div class="modal-foot">

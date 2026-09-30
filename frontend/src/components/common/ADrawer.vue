@@ -24,14 +24,25 @@ const emit = defineEmits<{
   (e: 'open'): void
   (e: 'close'): void
 }>()
+
+// Element Plus names the vertical directions ttb/btt rather than top/bottom.
+type ElDirection = 'ltr' | 'rtl' | 'ttb' | 'btt'
+const directionMap: Record<string, ElDirection> = {
+  left: 'rtl',
+  right: 'ltr',
+  top: 'ttb',
+  bottom: 'btt'
+}
+const elDirection = computed<ElDirection>(() => directionMap[props.placement] ?? 'rtl')
+const isVertical = computed(() => props.placement === 'top' || props.placement === 'bottom')
 </script>
 
 <template>
   <ElDrawer
     :model-value="modelValue"
     :title="title"
-    :direction="placement"
-    :size="placement === 'left' || placement === 'right' ? size : size"
+    :direction="elDirection"
+    :size="isVertical ? '30%' : size"
     :with-header="withHeader"
     :show-close="showClose"
     :close-on-press-escape="closeOnPressEscape"

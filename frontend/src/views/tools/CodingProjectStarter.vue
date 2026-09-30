@@ -14,7 +14,9 @@ import ASelect from '@components/common/ASelect.vue'
 import ASwitch from '@components/common/ASwitch.vue'
 import ResultPanel from '@components/common/ResultPanel.vue'
 import RevealOnScroll from '@components/animation/RevealOnScroll.vue'
-import { generateCodingProject, type Stack, type AiTarget } from '@utils/generators/codingProject'
+// NOTE: type Stack is aliased to StackOption to avoid colliding with the
+// <Stack> layout component imported above (both would be "Stack").
+import { generateCodingProject, type Stack as StackOption, type AiTarget } from '@utils/generators/codingProject'
 import { getTool } from '@utils/toolCatalog'
 
 const meta = getTool('coding-project-starter')!
@@ -27,14 +29,14 @@ useSEO({
 
 const projectName = ref('My AI App')
 const description = ref('A small web app for generating AI workflows.')
-const frontend = ref<Stack | ''>('Vue 3')
-const backend = ref<Stack | ''>('FastAPI')
+const frontend = ref<StackOption | ''>('Vue 3')
+const backend = ref<StackOption | ''>('FastAPI')
 const fullStack = ref(true)
 const aiTarget = ref<AiTarget>('CLAUDE_CODE')
 const features = ref('User authentication\nWorkflow builder\nROI calculator\nAdmin dashboard')
 const conventions = ref('- TypeScript strict mode\n- Vue 3 Composition API\n- Backend uses repository pattern\n- All API responses follow {code, message, data}')
 
-const stackOptions: Stack[] = ['Vue 3', 'React', 'Next.js', 'Nuxt 3', 'Spring Boot', 'FastAPI', 'Node.js (Express)', 'Node.js (NestJS)', 'Go (Gin)', 'Python (Django)']
+const stackOptions: StackOption[] = ['Vue 3', 'React', 'Next.js', 'Nuxt 3', 'Spring Boot', 'FastAPI', 'Node.js (Express)', 'Node.js (NestJS)', 'Go (Gin)', 'Python (Django)']
 const targetOptions = [
   { label: 'Claude Code', value: 'CLAUDE_CODE' },
   { label: 'Codex CLI',   value: 'CODEX' },

@@ -248,6 +248,7 @@ router.beforeEach((to) => {
   if (meta.requiresAdmin && (!user || user.role !== 'ADMIN')) {
     return { path: '/' }
   }
+  return true
 })
 
 function safeParse(s: string): { role?: string } | null {

@@ -113,6 +113,19 @@ async function toggleFeature(t: AdminTool) {
 }
 
 function askDelete(t: AdminTool) { confirmDelete.value = t }
+
+// Built in script, not in the template: `\"` inside a :title="..." attribute
+// breaks Vue's template expression parser.
+const confirmTitle = computed(() =>
+  confirmDelete.value ? `Delete "${confirmDelete.value.name}"?` : ''
+)
+
+// AModal's v-model is a boolean — v-model="confirmDelete" would feed the whole
+// AdminTool object into a boolean prop.
+const confirmOpen = computed({
+  get: () => confirmDelete.value !== null,
+  set: (v: boolean) => { if (!v) confirmDelete.value = null }
+})
 async function doDelete() {
   if (!confirmDelete.value?.id) return
   try {
@@ -129,6 +142,25 @@ function resetFilters() {
   filterStatus.value = 'all'
   filterQ.value = ''
   page.value = 1
+  load()
+}
+
+// Named handlers — inline arrow bodies with `;` in templates break
+// the Vue template expression parser.
+function gotoFirstPage() {
+  page.value = 1
+  load()
+}
+
+function prevPage() {
+  if (page.value > 1) {
+    page.value--
+    load()
+  }
+}
+
+function nextPage() {
+  page.value++
   load()
 }
 
@@ -160,10 +192,10 @@ function formatDate(s?: string) {
         placeholder="Search name or description…"
         clearable
         style="flex: 1; min-width: 200px;"
-        @keyup.enter="() => { page = 1; load() }"
+        @keyup.enter="gotoFirstPage"
       />
       <ASelect v-model="filterStatus" :options="statusOptions" style="width: 160px;" />
-      <AButton variant="ghost" size="md" @click="() => { page = 1; load() }">Apply</AButton>
+      <AButton variant="ghost" size="md" @click="gotoFirstPage">Apply</AButton>
       <AButton variant="ghost" size="md" @click="resetFilters">Reset</AButton>
     </div>
 
@@ -224,12 +256,12 @@ function formatDate(s?: string) {
     </div>
 
     <footer v-if="(data?.total ?? 0) > pageSize" class="pagination">
-      <AButton variant="ghost" size="sm" :disabled="page <= 1" @click="() => { page--; load() }">Previous</AButton>
+      <AButton variant="ghost" size="sm" :disabled="page <= 1" @click="prevPage">Previous</AButton>
       <span class="page-info">Page {{ page }} · {{ data?.total }} total</span>
       <AButton
         variant="ghost" size="sm"
         :disabled="page * pageSize >= (data?.total ?? 0)"
-        @click="() => { page++; load() }"
+        @click="nextPage"
       >Next</AButton>
     </footer>
 
@@ -291,7 +323,7 @@ function formatDate(s?: string) {
       </template>
     </ADrawer>
 
-    <AModal v-model="confirmDelete" :title="`Delete \"${confirmDelete?.name}\"?`" size="sm">
+    <AModal v-model="confirmOpen" :title="confirmTitle" size="sm">
       <p class="confirm-text">This will soft-delete the tool. It will no longer appear in the public tool catalog.</p>
       <template #footer>
         <div class="modal-foot">

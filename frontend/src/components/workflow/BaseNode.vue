@@ -4,7 +4,11 @@ import { Handle, Position, type NodeProps } from '@vue-flow/core'
 import AIcon from '@components/common/AIcon.vue'
 import { NODE_KINDS, type WorkflowNodeData, type NodeKind } from '@utils/workflowTypes'
 
-interface Props extends NodeProps {
+// NOTE: written as a type intersection rather than `interface extends NodeProps`.
+// Vue's SFC type resolver cannot follow an `extends` clause pointing at an
+// imported type inside <script setup>, and fails with
+// "Failed to resolve extends base type".
+type Props = NodeProps & {
   data: WorkflowNodeData
   selected?: boolean
 }

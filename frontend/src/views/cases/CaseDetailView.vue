@@ -26,15 +26,25 @@ const item = ref(getCase(slug.value))
 const viewCount = ref(0)
 const loading = ref(!item.value)   // only show skeleton if no local fallback
 const isOffline = ref(false)
-const notFound = ref(!item.value && false)  // resolved after fetch fails
+const notFound = ref(false)  // resolved after the fetch attempt
+
+// CaseStudy (local shape) has no client/duration fields, but the API does.
+// Track them separately so the hero meta-row can show them when present.
+const clientName = ref('')
+const duration = ref('')
 
 async function load() {
+  const applyApi = (api: Awaited<ReturnType<typeof fetchCaseDetail>>) => {
+    item.value = adaptCase(api)
+    viewCount.value = api.viewCount ?? 0
+    clientName.value = api.client || ''
+    duration.value = api.duration || ''
+  }
+
   if (item.value) {
     // already have local copy — still try API for fresh view_count
     try {
-      const api = await fetchCaseDetail(slug.value)
-      item.value = adaptCase(api)
-      viewCount.value = api.viewCount ?? 0
+      applyApi(await fetchCaseDetail(slug.value))
     } catch {
       isOffline.value = true
     }
@@ -42,9 +52,7 @@ async function load() {
   }
   loading.value = true
   try {
-    const api = await fetchCaseDetail(slug.value)
-    item.value = adaptCase(api)
-    viewCount.value = api.viewCount ?? 0
+    applyApi(await fetchCaseDetail(slug.value))
   } catch {
     const local = getCase(slug.value)
     if (local) {
@@ -169,13 +177,13 @@ function renderMd(md: string): string {
               <AIcon name="calendar" :size="14" />
               {{ item.publishedAt }}
             </span>
-            <span v-if="item.duration" class="meta-item">
+            <span v-if="duration" class="meta-item">
               <AIcon name="clock" :size="14" />
-              {{ item.duration }}
+              {{ duration }}
             </span>
-            <span v-if="item.role" class="meta-item">
+            <span v-if="clientName" class="meta-item">
               <AIcon name="user" :size="14" />
-              {{ item.role }}
+              {{ clientName }}
             </span>
             <span v-if="viewCount > 0" class="meta-item" :title="`${viewCount.toLocaleString()} views`">
               <AIcon name="eye" :size="14" />

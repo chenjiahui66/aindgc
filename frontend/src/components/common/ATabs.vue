@@ -11,13 +11,13 @@ interface Tab {
 interface Props {
   modelValue?: string | number
   tabs: Tab[]
-  type?: 'card' | 'border-card' | 'line'
+  type?: 'card' | 'border-card' | ''
   align?: 'left' | 'center' | 'right'
   block?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
-  type: 'line',
+const props = withDefaults(defineProps<Props>(), {
+  type: '',
   align: 'left'
 })
 
@@ -29,6 +29,16 @@ const emit = defineEmits<{
 function onTabClick(name: string | number) {
   emit('update:modelValue', name)
 }
+
+// Lives in script, not in the template: an inline type annotation inside a
+// template attribute is not parseable by the Vue template expression parser.
+type TabClickPayload = { paneName?: string | number }
+
+function handleTabClick(p: TabClickPayload) {
+  const name = p.paneName ?? ''
+  const tab = props.tabs.find(t => t.name === name) || { label: '', name }
+  emit('tab-click', { name, tab })
+}
 </script>
 
 <template>
@@ -37,7 +47,7 @@ function onTabClick(name: string | number) {
     :type="type"
     :class="['a-tabs', `align-${align}`, { block }]"
     @update:model-value="onTabClick"
-    @tab-click="(p: { paneName: string | number }) => emit('tab-click', { name: p.paneName, tab: tabs.find(t => t.name === p.paneName) || { label: '', name: p.paneName } })"
+    @tab-click="handleTabClick"
   >
     <ElTabPane
       v-for="tab in tabs"

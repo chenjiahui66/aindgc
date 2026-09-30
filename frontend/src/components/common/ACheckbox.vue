@@ -1,5 +1,7 @@
 <script setup lang="ts" generic="T extends string | number | boolean">
 import { ElCheckboxGroup, ElCheckbox } from 'element-plus'
+import { computed } from 'vue'
+import type { CheckboxValueType } from 'element-plus'
 
 interface Option {
   label: string
@@ -27,17 +29,23 @@ function onChange(v: T[]) {
   emit('update:modelValue', v)
   emit('change', v)
 }
+
+// ElCheckboxGroup is typed against (string | number)[]; this component's
+// generic also allows boolean. Bridge the two here rather than in the template,
+// where `as` casts are not parseable.
+const elValue = computed(() => props.modelValue as unknown as Array<string | number>)
+const onElChange = (v: CheckboxValueType[]) => onChange(v as unknown as T[])
 </script>
 
 <template>
   <ElCheckboxGroup
-    :model-value="modelValue as unknown as Array<string | number | boolean>"
+    :model-value="elValue"
     :disabled="disabled"
     :min="min"
     :max="max"
     :class="['a-checkbox-group', { block }]"
-    @update:model-value="(v: unknown) => onChange(v as T[])"
-    @change="(v: unknown) => onChange(v as T[])"
+    @update:model-value="onElChange"
+    @change="onElChange"
   >
     <template v-if="options && options.length">
       <ElCheckbox

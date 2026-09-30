@@ -48,6 +48,25 @@ function resetFilters() {
   load()
 }
 
+// Named handlers — inline arrow bodies with `;` in templates break
+// the Vue template expression parser.
+function gotoFirstPage() {
+  page.value = 1
+  load()
+}
+
+function prevPage() {
+  if (page.value > 1) {
+    page.value--
+    load()
+  }
+}
+
+function nextPage() {
+  page.value++
+  load()
+}
+
 async function toggleStatus(u: AdminUserRow) {
   const next = u.status === 1 ? 0 : 1
   try {
@@ -102,10 +121,10 @@ function roleVariant(r: string): 'primary' | 'muted' {
         placeholder="Search username / email / nickname…"
         clearable
         style="flex: 1; min-width: 200px;"
-        @keyup.enter="() => { page = 1; load() }"
+        @keyup.enter="gotoFirstPage"
       />
       <ASelect v-model="statusFilter" :options="statusOptions" style="width: 140px;" disabled />
-      <AButton variant="ghost" size="md" @click="() => { page = 1; load() }">Apply</AButton>
+      <AButton variant="ghost" size="md" @click="gotoFirstPage">Apply</AButton>
       <AButton variant="ghost" size="md" @click="resetFilters">Reset</AButton>
     </div>
 
@@ -126,7 +145,7 @@ function roleVariant(r: string): 'primary' | 'muted' {
           <tr v-for="u in data.records" :key="u.id">
             <td class="col-user">
               <div class="user-cell">
-                <AAvatar :initial="userInitial(u)" :size="32" />
+                <AAvatar :name="userInitial(u)" size="sm" />
                 <div class="user-meta">
                   <span class="user-name">{{ u.nickname || u.username }}</span>
                   <span class="user-handle">@{{ u.username }}</span>
@@ -166,12 +185,12 @@ function roleVariant(r: string): 'primary' | 'muted' {
     </div>
 
     <footer v-if="(data?.total ?? 0) > pageSize" class="pagination">
-      <AButton variant="ghost" size="sm" :disabled="page <= 1" @click="() => { page--; load() }">Previous</AButton>
+      <AButton variant="ghost" size="sm" :disabled="page <= 1" @click="prevPage">Previous</AButton>
       <span class="page-info">Page {{ page }} · {{ data?.total }} total</span>
       <AButton
         variant="ghost" size="sm"
         :disabled="page * pageSize >= (data?.total ?? 0)"
-        @click="() => { page++; load() }"
+        @click="nextPage"
       >Next</AButton>
     </footer>
   </div>

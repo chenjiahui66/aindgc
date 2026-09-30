@@ -138,8 +138,9 @@ onMounted(() => {
       salesLeads.value = decoded.salesLeadsPerMonth
       automationRate.value = decoded.automationRate
       toast.success('Loaded from share link')
-      // Clean URL
-      history.replaceState(null, '', location.pathname)
+      // Clean URL — use window.history because a local `history` ref
+      // (the saved-calculations list) shadows the global here.
+      window.history.replaceState(null, '', window.location.pathname)
     }
   }
 })

@@ -20,8 +20,8 @@ export function renderMarkdownLite(md: string): string {
     .replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (_, lang, code) => {
       return `<pre class="md-code"><code class="lang-${lang || 'text'}">${code}</code></pre>`
     })
-    .replace(/^#{1,6}\s+(.*)$/gm, (_, text) => {
-      const level = _.match(/^#+/)[0].length
+    .replace(/^(#{1,6})\s+(.*)$/gm, (_, hashes, text) => {
+      const level = hashes.length
       return `<h${level} class="md-h md-h${level}">${text}</h${level}>`
     })
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')

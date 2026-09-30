@@ -81,7 +81,7 @@ function handleLogout() {
           <span class="topbar-sub">admin.aindgc.com</span>
         </div>
         <div class="topbar-right">
-          <AAvatar :initial="userInitial" :size="32" />
+          <AAvatar :name="userStore.displayName" size="sm" />
           <div class="topbar-user">
             <span class="topbar-name">{{ userStore.displayName }}</span>
             <span class="topbar-role">ADMIN</span>

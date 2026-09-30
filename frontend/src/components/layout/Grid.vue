@@ -13,10 +13,11 @@ const props = withDefaults(defineProps<Props>(), {
 
 function gridTemplate(cols: Props['cols']): string {
   if (typeof cols === 'number') return `repeat(${cols}, minmax(0, 1fr))`
-  const xs = cols.sm || 1
-  const md = cols.md || Math.min(2, xs + 1)
-  const lg = cols.lg || Math.min(3, md + 1)
-  const xl = cols.xl || lg
+  if (!cols) return 'repeat(3, minmax(0, 1fr))'
+  const xs = cols.sm ?? 1
+  const md = cols.md ?? Math.min(2, xs + 1)
+  const lg = cols.lg ?? Math.min(3, md + 1)
+  const xl = cols.xl ?? lg
   return `repeat(${xl}, minmax(0, 1fr))`
 }
 </script>

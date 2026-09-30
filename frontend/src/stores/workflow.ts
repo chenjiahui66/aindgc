@@ -202,6 +202,7 @@ export const useWorkflowStore = defineStore('workflow', () => {
     removeEdge,
     renameGraph,
     setDescription,
+    touch,
     saveCurrent,
     deleteSaved,
     exportJSON,

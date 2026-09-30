@@ -46,7 +46,7 @@ const classes = computed(() => [
     :href="tag === 'a' ? href : undefined"
     :target="tag === 'a' ? target : undefined"
     :disabled="tag === 'button' ? (disabled || loading) : undefined"
-    @click="(e) => $emit('click', e)"
+    @click="(e: MouseEvent) => $emit('click', e)"
   >
     <span v-if="loading" class="spinner" aria-hidden="true"></span>
     <span v-else-if="$slots.icon" class="icon"><slot name="icon" /></span>
