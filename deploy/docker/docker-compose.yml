@@ -55,7 +55,12 @@ services:
     container_name: aindgc-web
     restart: unless-stopped
     ports:
+      # 443 is published even in HTTP-only mode. nginx simply is not listening
+      # on it yet, which is harmless — but the port must be mapped BEFORE the
+      # HTTPS switch, otherwise the container listens on 443 and the host
+      # silently refuses to forward to it.
       - "80:80"
+      - "443:443"
     depends_on:
       backend:
         condition: service_healthy

@@ -1,0 +1,46 @@
+# =====================================================================
+# Aindgc — HTTPS override
+#
+# Layer this on top of docker-compose.yml once a certificate exists:
+#     docker compose -f docker-compose.yml -f docker-compose.https.yml up -d
+#
+# It does two things:
+#   1. bind-mounts nginx.https.conf over the image's default.conf
+#   2. bind-mounts the certificate directory the certbot service writes to
+#
+# The base compose file keeps working untouched in HTTP-only mode, so a
+# certificate problem can never leave you with no site at all.
+# =====================================================================
+
+services:
+  web:
+    volumes:
+      - ./nginx.https.conf:/etc/nginx/conf.d/default.conf:ro
+      # certbot writes here; nginx only reads. Read-only is deliberate so a
+      # compromised web container cannot rewrite its own TLS key.
+      - ./certs/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    environment:
+      # Lets the app emit https:// absolute URLs behind the TLS terminator.
+      - FORWARDED_PROTO=https
+
+  # Renewal loop. Started by issue-cert.sh; kept in the override so a plain
+  # `docker compose up -d` never pulls the certbot image on machines that
+  # cannot reach Docker Hub.
+  certbot:
+    image: certbot/certbot:latest
+    container_name: aindgc-certbot
+    restart: unless-stopped
+    volumes:
+      - ./certs/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    # 12-hour loop: `certbot renew` is a no-op until a cert is within 30 days
+    # of expiry, so this is cheap and keeps certs from silently expiring.
+    entrypoint: >
+      sh -c "trap exit TERM;
+             while :; do
+               certbot renew --webroot -w /var/www/certbot --quiet;
+               sleep 12h & wait $${!};
+             done"
+    networks:
+      - aindgc
