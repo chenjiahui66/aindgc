@@ -87,8 +87,12 @@ public class ContentDataInitializer implements CommandLineRunner {
 
     private void seedTools() {
         if (!isEmpty("t_tool", toolMapper)) return;
-        var wf = cat("Workflow"); var skill = cat("Skill"); var ctx = cat("Context");
-        var code = cat("Coding"); var prompt = cat("Prompt"); var schema = cat("Schema");
+        // NOTE: these must be the lowercase *slug* values. The 1-arg cat() below matches on
+        // the slug column. Passing the display name ("Workflow") only ever worked because
+        // MySQL's utf8mb4_unicode_ci collation is case-insensitive — it returns null on any
+        // case-sensitive database (H2), which surfaced as a bare NullPointerException here.
+        var wf = cat("workflow"); var skill = cat("skill"); var ctx = cat("context");
+        var code = cat("coding"); var prompt = cat("prompt"); var schema = cat("schema");
         for (var t : List.of(
             tool("agent-workflow-generator", "Agent Workflow Generator",
                 "把工作流拆成 AI 可执行的结构",

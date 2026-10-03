@@ -1,0 +1,30 @@
+# Normalise line endings in the repository.
+* text=auto
+
+# Shell scripts MUST stay LF. This repo is developed on Windows with
+# core.autocrlf=true, which would otherwise check purge-old.sh out with CRLF
+# endings; uploaded to a Linux server, bash then fails on every line with
+#     $'\r': command not found
+*.sh text eol=lf
+
+# Container / server config: the tooling that reads these all expect LF.
+Dockerfile text eol=lf
+*.Dockerfile text eol=lf
+docker-compose*.yml text eol=lf
+*.conf text eol=lf
+
+# Windows-only helpers stay CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary assets must never be line-ending translated.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.zip binary
+*.jar binary

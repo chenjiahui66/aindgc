@@ -1,0 +1,76 @@
+# =====================================================================
+# Aindgc — Docker Compose
+#
+# Topology: 2 containers, no database container.
+#
+#   web (nginx, 80)  ──proxies /api──▶  backend (Spring Boot, 8080)
+#                                          │
+#                                          └── H2 file db in volume
+#                                              "aindgc-data:/data"
+#
+# Why no MySQL container: the target host has ~1.6 GB RAM. A MySQL
+# container costs 400-500 MB resident for a database that is a few MB.
+# H2 runs inside the backend JVM, so the whole stack is ~700 MB.
+# This was verified locally against the full 48-check smoke suite.
+#
+# Usage:
+#   cd deploy/docker
+#   cp .env.example .env          # then edit the secrets
+#   docker compose up -d --build
+# =====================================================================
+
+services:
+  backend:
+    build:
+      # Repo root, so the Dockerfile can COPY backend/target/*.jar
+      context: ../..
+      dockerfile: deploy/docker/backend.Dockerfile
+    image: aindgc/backend:latest
+    container_name: aindgc-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: h2
+      AINDGC_DATA_DIR: /data
+      AINDGC_ADMIN_USERNAME: ${ADMIN_USERNAME:-admin}
+      AINDGC_ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@aindgc.com}
+      AINDGC_ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD must be set in .env}
+      AINDGC_JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set in .env}
+    volumes:
+      - aindgc-data:/data
+    # Not published to the host: only the nginx container needs to reach it.
+    expose:
+      - "8080"
+    networks:
+      - aindgc
+    deploy:
+      resources:
+        limits:
+          memory: 700M
+
+  web:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/frontend.Dockerfile
+    image: aindgc/web:latest
+    container_name: aindgc-web
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - aindgc
+    deploy:
+      resources:
+        limits:
+          memory: 96M
+
+networks:
+  aindgc:
+    driver: bridge
+
+volumes:
+  # The H2 database. NEVER use `docker compose down -v` — it deletes this.
+  aindgc-data:
+    driver: local

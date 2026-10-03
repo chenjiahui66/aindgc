@@ -1,0 +1,47 @@
+# =====================================================================
+# Aindgc · H2 profile
+#
+# Used for single-box / Docker deployments. H2 runs in-process inside the
+# Spring Boot JVM, which is the whole point on a ~1.6 GB server: a separate
+# MySQL container would add 400-500 MB of resident memory for data that is
+# a few MB in total.
+#
+# Schema source of truth is still backend/src/main/resources/sql/01-schema.sql
+# (MySQL). The H2 file is GENERATED from it by deploy/docker/tools/mysql2h2.mjs
+# — regenerate rather than hand-editing, or the two will drift.
+# =====================================================================
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    # File mode (not in-memory) so data survives container restarts.
+    #   MODE=MySQL              - accept MySQL-flavoured SQL
+    #   DATABASE_TO_LOWER=TRUE  - keep unquoted identifiers lowercase like MySQL,
+    #                             instead of H2's default uppercasing
+    #   AUTO_SERVER=TRUE        - lets an external tool attach while the app runs
+    url: jdbc:h2:file:${AINDGC_DATA_DIR:./data}/aindgc;MODE=MySQL;DATABASE_TO_LOWER=TRUE;AUTO_SERVER=TRUE
+    username: sa
+    password: ""
+
+  sql:
+    init:
+      # "always" (not the embedded-only default) so an explicit mode is obvious in
+      # the config rather than implicit. Both scripts are idempotent:
+      #   01-schema-h2.sql - CREATE TABLE IF NOT EXISTS, no DROP
+      #   02-seed-h2.sql   - MERGE ... KEY (...) upserts
+      # so re-running on every boot is safe and does not wipe existing rows.
+      mode: always
+      schema-locations: classpath:sql/01-schema-h2.sql
+      data-locations: classpath:sql/02-seed-h2.sql
+      continue-on-error: false
+      # Without this the Chinese seed data is written in the platform default
+      # charset and comes back as mojibake.
+      encoding: UTF-8
+
+mybatis-plus:
+  # Drives the pagination dialect in MybatisPlusConfig.
+  db-type: h2
+
+logging:
+  level:
+    com.aindgc.ai: DEBUG
+    org.springframework.web: INFO

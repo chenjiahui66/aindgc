@@ -86,6 +86,19 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!--
+            H2 file-mode database, used by the "h2" Spring profile (Docker / single-box
+            deployments). Kept as a normal runtime dependency rather than a Docker-only
+            one so the exact same jar can be smoke-tested against H2 locally.
+            The MySQL driver above stays for the default dev profile — 01-schema.sql is
+            the MySQL source of truth and 01-schema-h2.sql is generated from it.
+        -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Cache (Phase 1: Caffeine) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
