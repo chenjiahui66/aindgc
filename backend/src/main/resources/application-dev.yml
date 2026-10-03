@@ -1,4 +1,11 @@
 spring:
+  config:
+    # Local, gitignored secrets file. Lets the app boot from the IDE or
+    # `mvn spring-boot:run` without exporting DB_USER/DB_PASS by hand.
+    # Both paths are listed so it works whether the working directory is
+    # `backend/` or the repository root. `optional:` means a missing file
+    # is not an error — real deployments inject real env vars instead.
+    import: "optional:file:.env[.properties],optional:file:backend/.env[.properties]"
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # characterEncoding must be a *Java* charset name (UTF-8), not the MySQL
