@@ -97,7 +97,10 @@ export default {
       contact: 'Contact'
     },
     copyright: '© {year} Aindgc. All rights reserved.',
-    builtWith: 'Built with intent.'
+    builtWith: 'Built with intent.',
+    icp: {
+      label: 'ICP filing information'
+    }
   },
 
   auth: {

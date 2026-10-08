@@ -96,7 +96,10 @@ export default {
       contact: '联系我们'
     },
     copyright: '© {year} Aindgc. 保留所有权利。',
-    builtWith: '用心打造。'
+    builtWith: '用心打造。',
+    icp: {
+      label: '网站备案信息'
+    }
   },
 
   auth: {

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import Container from './Container.vue'
 import AIcon from '@components/common/AIcon.vue'
 import LangSwitch from '@components/common/LangSwitch.vue'
 import { useSEO } from '@composables/useSEO'
+import { useSiteConfig } from '@composables/useSiteConfig'
 
 interface Props {
   showSystem?: boolean
@@ -12,16 +13,19 @@ interface Props {
 withDefaults(defineProps<Props>(), { showSystem: false })
 
 const { t } = useI18n()
-const siteConfig = ref<Record<string, string>>({})
+const { config, load } = useSiteConfig()
 
-onMounted(async () => {
-  siteConfig.value = {
-    'site.title': 'Aindgc',
-    'contact.email': 'hello@aindgc.com',
-    'social.github': '',
-    'social.twitter': ''
-  }
-})
+/**
+ * Placeholder filing number — REPLACE before going live with a real site.
+ * Once `site.icp` is filled in (Admin → Settings, or directly in the DB) this
+ * fallback is ignored, so no rebuild is needed to change it.
+ */
+const PLACEHOLDER_ICP = '苏ICP备2026053364号'
+
+const icpNumber = computed(() => config.value['site.icp'] || PLACEHOLDER_ICP)
+const email = computed(() => config.value['contact.email'] || 'hello@aindgc.com')
+
+onMounted(load)
 
 useSEO({
   title: 'Aindgc — AI Product Lab'
@@ -33,14 +37,14 @@ useSEO({
     <Container>
       <div class="footer-grid">
         <div class="col-brand">
-          <div class="brand">
-            <svg viewBox="0 0 32 32" width="22" height="22">
+          <router-link to="/" class="brand" :aria-label="t('common.appName')">
+            <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true">
               <rect width="32" height="32" rx="6" fill="var(--bg-elevated)" />
               <path d="M8 22V10l8 12V10" stroke="var(--accent-primary)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
               <circle cx="24" cy="10" r="2" fill="var(--accent-secondary)" />
             </svg>
             <span>{{ t('common.appName') }}</span>
-          </div>
+          </router-link>
           <p class="tagline">{{ t('hero.title') }}</p>
           <p class="muted">{{ t('common.appTagline') }} · est. 2026</p>
           <div class="lang-slot">
@@ -82,8 +86,8 @@ useSEO({
               </a>
             </li>
             <li>
-              <a href="mailto:hello@aindgc.com">
-                <AIcon name="mail" :size="14" /> hello@aindgc.com
+              <a :href="`mailto:${email}`">
+                <AIcon name="mail" :size="14" /> {{ email }}
               </a>
             </li>
           </ul>
@@ -100,6 +104,20 @@ useSEO({
           <router-link v-if="showSystem" to="/design-system">Design System</router-link>
         </div>
       </div>
+
+      <!--
+        ICP filing number. MIIT requires it to link to beian.miit.gov.cn.
+        Value comes from the `site.icp` config row so it can be changed from
+        Admin → Settings without a rebuild.
+      -->
+      <p class="icp">
+        <a
+          href="https://beian.miit.gov.cn/"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          :aria-label="t('footer.icp.label')"
+        >{{ icpNumber }}</a>
+      </p>
     </Container>
   </footer>
 </template>
@@ -128,7 +146,10 @@ useSEO({
   font-size: var(--fs-body-lg);
   color: var(--text-primary);
   margin-bottom: var(--space-3);
+  text-decoration: none;
+  transition: opacity var(--duration-fast) var(--ease-standard);
 }
+.col-brand .brand:hover { opacity: 0.75; }
 .tagline {
   font-size: var(--fs-body);
   color: var(--text-primary);
@@ -199,6 +220,22 @@ useSEO({
 }
 .bottom-links a:hover { color: var(--text-primary); }
 .dot { color: var(--text-muted); }
+
+/* ICP filing number — centred under the bottom bar, as MIIT expects. */
+.icp {
+  margin: var(--space-4) 0 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--fs-caption);
+  letter-spacing: var(--letter-wide);
+  color: var(--text-tertiary);
+}
+.icp a {
+  color: var(--text-tertiary);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+.icp a:hover { color: var(--accent-primary); }
 
 @media (max-width: 768px) {
   .footer-grid {
