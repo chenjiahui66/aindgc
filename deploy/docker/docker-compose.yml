@@ -54,6 +54,17 @@ services:
     image: aindgc/web:latest
     container_name: aindgc-web
     restart: unless-stopped
+    volumes:
+      # Serve dist straight off the host instead of baking it into the image.
+      # This is what makes a release a pure file upload: rsync the new dist/
+      # over this directory and nginx picks it up immediately, with no
+      # `docker compose build`, no container recreate, and no window where the
+      # site is down.
+      #
+      # The image still COPYs a dist (see frontend.Dockerfile) so a container
+      # started without this mount still serves a working site rather than a
+      # bare 403.
+      - ../../frontend/dist:/usr/share/nginx/html:ro
     ports:
       # 443 is published even in HTTP-only mode. nginx simply is not listening
       # on it yet, which is harmless — but the port must be mapped BEFORE the

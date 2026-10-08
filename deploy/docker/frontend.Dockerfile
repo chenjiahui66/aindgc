@@ -12,6 +12,10 @@
 # =====================================================================
 FROM nginx:1.27-alpine
 
+# NOTE: this COPY is a fallback only.
+# docker-compose.yml bind-mounts ../../frontend/dist over /usr/share/nginx/html
+# so that publishing a release is just a file upload — no image rebuild, no
+# container recreate. This baked-in copy keeps the image usable standalone.
 COPY frontend/dist /usr/share/nginx/html
 COPY deploy/docker/nginx.conf /etc/nginx/conf.d/default.conf
 
