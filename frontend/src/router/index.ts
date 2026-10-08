@@ -246,7 +246,11 @@ router.beforeEach((to) => {
     return { path: '/login', query: { redirect: to.fullPath } }
   }
   if (meta.requiresAdmin && (!user || user.role !== 'ADMIN')) {
-    return { path: '/' }
+    // Don't silently bounce to the homepage — that reads as "the link is
+    // broken". Send a logged-in non-admin to login so the reason is visible,
+    // and carry the original path so they land back here after re-auth.
+    if (token) return { path: '/login', query: { redirect: to.fullPath } }
+    return { path: '/login', query: { redirect: to.fullPath } }
   }
   return true
 })
